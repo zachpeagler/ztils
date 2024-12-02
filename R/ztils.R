@@ -66,7 +66,7 @@ multiPDF_Z <- function (x, seq_length, distributions, palette, var_name) {
 
   # create plot with real density
   p <- ggplot2::ggplot(data) +
-    ggplot2::geom_line(aes(x=x_seq, y=dens, color="Real Density"), linetype = 2)+
+    ggplot2::geom_line(aes(x=x_seq, y=dens, color="Real Density"), linetype = 2, linewidth = 3)+
     ggplot2::xlab(var_name)+
     ggplot2::ylab("PDF")+
     ggplot2::labs(title=paste("PDF plot for", var_name, "over selected distributions"))+
@@ -74,26 +74,26 @@ multiPDF_Z <- function (x, seq_length, distributions, palette, var_name) {
     ggplot2::theme_bw()
   # check for each type of distribution in the distributions, and add it if present
   if ("normal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_normal, color='Normal'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_normal, color='Normal'), linewidth = 2)
   }
   if ("lognormal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_lognormal, color='Lognormal'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_lognormal, color='Lognormal'), linewidth = 2)
   }
   if ("gamma" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_gamma, color='Gamma'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_gamma, color='Gamma'), linewidth = 2)
   }
   if ("exponential" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_exponential, color='Exponential'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_exponential, color='Exponential'), linewidth = 2)
   }
   p <- p +
     scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
     ggplot2::theme(
-      text = ggplot2::element_text(size=20, family="mont"),
-      title = ggplot2::element_text(size=26, family = "mont", face = "bold"),
+      text = ggplot2::element_text(size=14, family="mont"),
+      title = ggplot2::element_text(size=20, family = "mont", face = "bold"),
       legend.position="bottom",
       legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=24, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=24, family = "mont", face= "bold"),
+      legend.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
+      axis.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
     )
   return(p)
 }
@@ -123,7 +123,7 @@ multiCDF_Z <- function (x, seq_length, distributions, palette, var_name) {
   data <- multiFitR::multiCDF_cont(x, seq_length, distributions)
   # create plot with real density
   p <- ggplot2::ggplot(data) +
-    ggplot2::geom_line(aes(x=x_seq, y=dens, color="Real Distribution"), linetype = 2)+
+    ggplot2::geom_line(aes(x=x_seq, y=dens, color="Real Distribution"), linetype = 2, linewidth = 3)+
     ggplot2::xlab(var_name)+
     ggplot2::ylab("CDF")+
     ggplot2::labs(title=paste("CDF plot for", var_name, "over selected distributions"))+
@@ -131,26 +131,26 @@ multiCDF_Z <- function (x, seq_length, distributions, palette, var_name) {
     ggplot2::theme_bw()
   # check for each type of distribution in the distributions, and add it if present
   if ("normal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_normal, color='Normal'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_normal, color='Normal'), linewidth = 2)
   }
   if ("lognormal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_lognormal, color='Lognormal'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_lognormal, color='Lognormal'), linewidth = 2)
   }
   if ("gamma" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_gamma, color='Gamma'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_gamma, color='Gamma'), linewidth = 2)
   }
   if ("exponential" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_exponential, color='Exponential'))
+    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_exponential, color='Exponential'), linewidth = 2)
   }
   p <- p +
     scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
     ggplot2::theme(
-      text = ggplot2::element_text(size=20, family="mont"),
-      title = ggplot2::element_text(size=26, family = "mont", face = "bold"),
+      text = ggplot2::element_text(size=14, family="mont"),
+      title = ggplot2::element_text(size=20, family = "mont", face = "bold"),
       legend.position="bottom",
       legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=24, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=24, family = "mont", face= "bold"),
+      legend.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
+      axis.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
     )
   return(p)
 }
