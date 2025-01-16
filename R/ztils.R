@@ -155,6 +155,96 @@ multiCDF_Z <- function (x, seq_length, distributions, palette, var_name) {
   return(p)
 }
 
+#' Multiple Kolmogorov-Smirnov Tests for Continuous Variables
+#'
+#' This function gets the distance and p-value from a Kolmogorov-smirnov test for selected distributions
+#' against a continuous, non-negative input variable. Possible distributions include "normal",
+#' "lognormal", "gamma", "exponential", "cauchy", "t", "weibull", "logistic",
+#' and "all".
+#'
+#' @param x The variable to perform KS tests against
+#' @param distributions The distributions to test x against
+#' @returns A dataframe with the distance and p value for each performed
+#' KS test
+#' @export
+multiKS_cont <- function(x, distributions) {
+  # check if "all" was passed to distributions
+  if ("all" %in% distributions) {
+    distributions <- c("normal",
+                       "lognormal",
+                       "gamma",
+                       "exponential")
+  }
+  KS_df <- data.frame(matrix(ncol=3, nrow=0))
+  colnames(KS_df) <- c("Distribution", "Distance", "P-Value")
+  # check normal
+  if ("normal" %in% distributions) {
+    x_n <- MASS::fitdistr(x, "normal")
+    x_KS_n <- ks.test(x, "pnorm", mean=x_n$estimate[1],
+                      sd = x_n$estimate[2])
+    KS_n <- data.frame(matrix(ncol=0, nrow=1))
+    KS_n$Distribution <- "Normal"
+    KS_n$Distance <- if (is.null(x_KS_n$statistic)
+                         == FALSE) {x_KS_n$statistic}
+    else {"NA"}
+    KS_n$PValue <- if (is.null(x_KS_n$p.value)
+                       == FALSE) {x_KS_n$p.value}
+    else {"NA"}
+    KS_df <- rbind(KS_df, KS_n)
+  }
+  if ("lognormal" %in% distributions) {
+    x_ln <- MASS::fitdistr(x, "lognormal")
+    x_KS_ln <- ks.test(x, "plnorm",
+                       meanlog=x_ln$estimate[1],
+                       sdlog = x_ln$estimate[2])[c(1, 2)]
+    KS_ln <- data.frame(matrix(ncol=0, nrow=1))
+    KS_ln$Distribution <- "Lognormal"
+    KS_ln$Distance <- if (is.null(x_KS_ln$statistic)
+                          == FALSE) {x_KS_ln$statistic}
+    else {"NA"}
+    KS_ln$PValue <- if (is.null(x_KS_ln$p.value)
+                        == FALSE) {x_KS_ln$p.value}
+    else {"NA"}
+    KS_df <- rbind(KS_df, KS_ln)
+  }
+  if ("gamma" %in% distributions) {
+    x_g <- MASS::fitdistr(x, "gamma")
+    x_KS_g <- ks.test(x, "pgamma", shape=x_g$estimate[1],
+                      rate=x_g$estimate[2])
+    KS_g <- data.frame(matrix(ncol=0, nrow=1))
+    KS_g$Distribution <- "Gamma"
+    KS_g$Distance <- if (is.null(x_KS_g$statistic)
+                         == FALSE) {x_KS_g$statistic}
+    else {"NA"}
+    KS_g$PValue <- if (is.null(x_KS_g$p.value)
+                       == FALSE) {x_KS_g$p.value}
+    else {"NA"}
+    KS_df <- rbind(KS_df, KS_g)
+  }
+  if ("exponential" %in% distributions) {
+    x_exp <- MASS::fitdistr(x, "exponential")
+    x_KS_exp <- ks.test(x, "pexp", rate = x_exp$estimate)
+    KS_exp <- data.frame(matrix(ncol=0, nrow=1))
+    KS_exp$Distribution <- "Exponential"
+    KS_exp$Distance <- if (is.null(x_KS_exp$statistic)
+                           == FALSE) {x_KS_exp$statistic}
+    else {"NA"}
+    KS_exp$PValue <- if (is.null(x_KS_exp$p.value)
+                         == FALSE) {x_KS_exp$p.value}
+    else {"NA"}
+    KS_df <- rbind(KS_df, KS_exp)
+  }
+  
+  KS_df$Distribution = as.factor(KS_df$Distribution)
+  KS_df$Distance = as.numeric(KS_df$Distance)
+  KS_df$PValue = as.numeric(format(as.numeric(KS_df$PValue),
+                                   scientific = FALSE))
+  KS_df$Distance <- round(KS_df$Distance, 3)
+  KS_df$PValue <- round(KS_df$PValue, 3)
+  
+  return(KS_df)
+}
+
 #predPlot <- function(model, seq_length, group, data) {
 #  seq <- 
 #  prx <- as.data.frame(x=seq)
