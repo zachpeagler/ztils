@@ -1,11 +1,11 @@
 Package: ztils
-Title: Utilities for things I do a lot
+Title: ztils
 Version: 0.0.0.9000
 Authors@R: 
     person("Zach", "Peagler", , "zachpeagler00@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Utilities for easing the headache of common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, and predictions.
 License: use_mit_license()
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Imports: ggplot2, multiFitR
+Imports: ggplot2, multiFitR, scico
