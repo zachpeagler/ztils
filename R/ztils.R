@@ -40,6 +40,18 @@ no_extremes <- function(df, x) {
   return(df)
 }
 
+
+#'glm_pseudoR2
+#'
+#'A function for calculating the pseudo R^2 for a glm
+#'
+#'@param mod The model for which to calculate the pseudoR^2
+#'@export
+glm_pseudoR2 <- function (mod) {
+  1 - (mod$deviance/mod$null.deviance)
+  }
+
+
 #' multiPDF_Z
 #' 
 #' This function is a version of MultiPDF_plot from my MultiFitR package that is customized to use
@@ -259,93 +271,154 @@ multiKS_cont <- function(x, distributions) {
 #' 
 #' @param mod the model used for predictions
 #' @param dat the data used to render the "real" points on the graph and for aggregating groups to determine prediction limits (should be the same as the data used in the model)
-#' @param pvar the predictor variable (x variable / variable the model will predict against)
 #' @param rvar the response variable (y variable / variable the model is predicting)
+#' @param pvar the predictor variable (x variable / variable the model will predict against)
 #' @param grp the group; should be a factor; one response curve will be made for each group
 #' @param len the length of the variable over which to predict (higher = more resolution, essentially)
 #' @param interval the type of interval to predict ("confidence" or "prediction")
 #' @param correction the type of correction to apply to the prediction ("normal", "exponential", or "logit")
-#' @param pallt color palette to use (uses scico palettes, because i like them the most. if you want it to use other palettes [RColorBrewer, etc] do it yourself <3 )
 #' @returns A plot showing the real data and the model's predicted 95% CI or PI over a number of groups, with optional corrections.
 #' @export
-predict_groupR <- function(mod, dat, pvar, rvar, grp, len, interval = "confidence", correction = "normal", pallt) {
-  ### deparse variables
-  d_pvar <- deparse(substitute(pvar))
-  d_rvar <- deparse(substitute(rvar))
-  d_grp  <- deparse(substitute(grp))
-  ### get explicit names (weird, but necessary for renaming the dx columns \>_>/ )
-  pvar_name <- colnames(dat[d_pvar])
-  rvar_name <- colnames(dat[d_rvar])
-  grp_name  <- colnames(dat[d_grp])
-  ## get group data ready
-  grps  <- sort(unique(dat[[d_grp]]))
-  ngrps <- length(grps)
-  ## get predictor range for each group
-  agg <- aggregate(dat[[d_pvar]] ~ dat[[d_grp]], data = dat, range)
-  dx_pvar <- data.frame(pvar = numeric(0))
-  for (i in 1:ngrps) {
-    tpvar <- data.frame(pvar = seq(agg[[2]][i,1], agg[[2]][i,2], length = len))
-    dx_pvar <- rbind(dx_pvar, tpvar)
-  }
-  dx <- data.frame(grp = rep(agg[[1]], each = len),
-                   pvar = dx_pvar)
-  colnames(dx) <- c(grp_name, pvar_name)
-  ## make prediction
-  if (interval == "confidence") {
-    ### we don't need to explicitly declare that it's a confidence interval, the predict function defaults to it
-    pred <- predict(mod, newdata = dx, se.fit = TRUE, type = "response")
-    ### check for correction type
-    if (correction == "exponential") {
-      dx$mn <- exp(qnorm(0.5,   pred$fit, pred$se.fit))
-      dx$lo <- exp(qnorm(0.025, pred$fit, pred$se.fit))
-      dx$up <- exp(qnorm(0.975, pred$fit, pred$se.fit))
-    } else if (correction == "logit") {
-      dx$mn <- plogis(qnorm(0.5,   pred$fit, pred$se.fit))
-      dx$lo <- plogis(qnorm(0.025, pred$fit, pred$se.fit))
-      dx$up <- plogis(qnorm(0.975, pred$fit, pred$se.fit))
-    } else {
-      dx$mn <- qnorm(0.5,   pred$fit, pred$se.fit)
-      dx$lo <- qnorm(0.025, pred$fit, pred$se.fit)
-      dx$up <- qnorm(0.975, pred$fit, pred$se.fit)
+predict_plot <- function(mod, dat, rvar, pvar, grp = NULL, len = 50, interval = "confidence", correction = "normal") {
+  if (!is.null(dat[[deparse(substitute(grp))]])){ ## grouped prediciton plot
+    ### deparse variables
+    d_pvar <- deparse(substitute(pvar))
+    d_rvar <- deparse(substitute(rvar))
+    d_grp  <- deparse(substitute(grp))
+    ### get explicit names  of deparsed variables
+    ### weird, but necessary for renaming the newdata (dx) columns \>_>/
+    pvar_name <- colnames(dat[d_pvar])
+    rvar_name <- colnames(dat[d_rvar])
+    grp_name  <- colnames(dat[d_grp])
+    ## get group data ready
+    grps  <- sort(unique(dat[[d_grp]]))
+    ngrps <- length(grps)
+    ## get predictor range for each group
+    agg <- aggregate(dat[[d_pvar]] ~ dat[[d_grp]], data = dat, range)
+    dx_pvar <- data.frame(pvar = numeric(0))
+    for (i in 1:ngrps) {
+      tpvar <- data.frame(pvar = seq(agg[[2]][i,1], agg[[2]][i,2], length = len))
+      dx_pvar <- rbind(dx_pvar, tpvar)
     }
-  } else { ### end confidence interval
-    pred <- predict(mod, newdata = dx, se.fit = TRUE,
-                    type = "response", interval = "prediction")
-    ### check for correction type
-    if (correction == "exponential") {
-      dx$mn <- exp(pred$fit[,"fit"])
-      dx$lo <- exp(pred$fit[,"lwr"])
-      dx$up <- exp(pred$fit[,"upr"])
-    } else if (correction == "logit") {
-      dx$mn <- plogis(pred$fit[,"fit"])
-      dx$lo <- plogis(pred$fit[,"lwr"])
-      dx$up <- plogis(pred$fit[,"upr"])
-    } else {
-      dx$mn <- pred$fit[,"fit"]
-      dx$lo <- pred$fit[,"lwr"]
-      dx$up <- pred$fit[,"upr"]
+    dx <- data.frame(grp = rep(agg[[1]], each = len),
+                     pvar = dx_pvar)
+    colnames(dx) <- c(grp_name, pvar_name)
+    ## make prediction
+    if (interval == "confidence") {
+      ### we don't need to explicitly declare that it's a confidence interval, the predict function defaults to it
+      pred <- predict(mod, newdata = dx, se.fit = TRUE, type = "response")
+      ### check for correction type
+      if (correction == "exponential") {
+        dx$mn <- exp(qnorm(0.5,   pred$fit, pred$se.fit))
+        dx$lo <- exp(qnorm(0.025, pred$fit, pred$se.fit))
+        dx$up <- exp(qnorm(0.975, pred$fit, pred$se.fit))
+      } else if (correction == "logit") {
+        dx$mn <- plogis(qnorm(0.5,   pred$fit, pred$se.fit))
+        dx$lo <- plogis(qnorm(0.025, pred$fit, pred$se.fit))
+        dx$up <- plogis(qnorm(0.975, pred$fit, pred$se.fit))
+      } else {
+        dx$mn <- qnorm(0.5,   pred$fit, pred$se.fit)
+        dx$lo <- qnorm(0.025, pred$fit, pred$se.fit)
+        dx$up <- qnorm(0.975, pred$fit, pred$se.fit)
+      }
+    } else { ### end confidence interval
+      pred <- predict(mod, newdata = dx, se.fit = TRUE,
+                      type = "response", interval = "prediction")
+      ### check for correction type
+      if (correction == "exponential") {
+        dx$mn <- exp(pred$fit[,"fit"])
+        dx$lo <- exp(pred$fit[,"lwr"])
+        dx$up <- exp(pred$fit[,"upr"])
+      } else if (correction == "logit") {
+        dx$mn <- plogis(pred$fit[,"fit"])
+        dx$lo <- plogis(pred$fit[,"lwr"])
+        dx$up <- plogis(pred$fit[,"upr"])
+      } else {
+        dx$mn <- pred$fit[,"fit"]
+        dx$lo <- pred$fit[,"lwr"]
+        dx$up <- pred$fit[,"upr"]
+      }
+    } ### end prediction interval
+    ## initialize plot with real data
+    p <- ggplot2::ggplot() + 
+      ggplot2::geom_point(data = dat, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_grp]]))
+    ## loop through treatments
+    for (g in 1:ngrps) {
+      flag <- which(dx[[d_grp]] == grps[g])
+      tdx <- dx[flag,]
+      p <- p + 
+        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=lo, color = .data[[d_grp]]),
+                           linewidth=1, show.legend=FALSE)+
+        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=mn, color = .data[[d_grp]]),
+                           linewidth=2, show.legend=FALSE)+
+        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=up, color = .data[[d_grp]]),
+                           linewidth=1, show.legend=FALSE)+
+        ggplot2::geom_ribbon(data=tdx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up,
+                                                    fill=.data[[d_grp]]), alpha = 0.5)
     }
-  } ### end prediction interval
-  ## initialize plot with real data
-  p <- ggplot2::ggplot() + 
-    ggplot2::geom_point(data = dat, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_grp]]))
-  ## loop through treatments
-  for (g in 1:ngrps) {
-    flag <- which(dx[[d_grp]] == grps[g])
-    tdx <- dx[flag,]
+  } else { ### non-grouped prediction plot
+    ### deparse variables
+    d_pvar <- deparse(substitute(pvar))
+    d_rvar <- deparse(substitute(rvar))
+    ### get explicit names  of deparsed variables
+    ### weird, but necessary for renaming the newdata (dx) columns \>_>/
+    pvar_name <- colnames(dat[d_pvar])
+    rvar_name <- colnames(dat[d_rvar])
+    ## get predictor range
+    dx_pvar <- seq(min(dat[[d_pvar]]), max(dat[[d_pvar]]), len)
+    dx <- data.frame(pvar = dx_pvar)
+    colnames(dx) <- pvar_name
+    ## make prediction
+    if (interval == "confidence") { ### confidence interval
+      ### we don't need to explicitly declare that it's a confidence interval, the predict function defaults to it
+      pred <- predict(mod, newdata = dx, se.fit = TRUE, type = "response")
+      ### check for correction type
+      if (correction == "exponential") {
+        dx$mn <- exp(qnorm(0.5,   pred$fit, pred$se.fit))
+        dx$lo <- exp(qnorm(0.025, pred$fit, pred$se.fit))
+        dx$up <- exp(qnorm(0.975, pred$fit, pred$se.fit))
+      } else if (correction == "logit") {
+        dx$mn <- plogis(qnorm(0.5,   pred$fit, pred$se.fit))
+        dx$lo <- plogis(qnorm(0.025, pred$fit, pred$se.fit))
+        dx$up <- plogis(qnorm(0.975, pred$fit, pred$se.fit))
+      } else {
+        dx$mn <- qnorm(0.5,   pred$fit, pred$se.fit)
+        dx$lo <- qnorm(0.025, pred$fit, pred$se.fit)
+        dx$up <- qnorm(0.975, pred$fit, pred$se.fit)
+      }
+    } else { ### prediction interval
+      pred <- predict(mod, newdata = dx, se.fit = TRUE,
+                      type = "response", interval = "prediction")
+      ### check for correction type
+      if (correction == "exponential") {
+        dx$mn <- exp(pred$fit[,"fit"])
+        dx$lo <- exp(pred$fit[,"lwr"])
+        dx$up <- exp(pred$fit[,"upr"])
+      } else if (correction == "logit") {
+        dx$mn <- plogis(pred$fit[,"fit"])
+        dx$lo <- plogis(pred$fit[,"lwr"])
+        dx$up <- plogis(pred$fit[,"upr"])
+      } else {
+        dx$mn <- pred$fit[,"fit"]
+        dx$lo <- pred$fit[,"lwr"]
+        dx$up <- pred$fit[,"upr"]
+      }
+    } ### end prediction interval
+    ## initialize plot with real data
+    p <- ggplot2::ggplot() + 
+      ggplot2::geom_point(data = dat, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_pvar]]))
+    ## add prediction
     p <- p + 
-      ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=lo, color = .data[[d_grp]]),
+      ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=lo),
                          linewidth=1, show.legend=FALSE)+
-      ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=mn, color = .data[[d_grp]]),
+      ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=mn),
                          linewidth=2, show.legend=FALSE)+
-      ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=up, color = .data[[d_grp]]),
+      ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=up),
                          linewidth=1, show.legend=FALSE)+
-      ggplot2::geom_ribbon(data=tdx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up,
-                                                  fill=.data[[d_grp]]), alpha = 0.5)
-  }
+      ggplot2::geom_ribbon(data=dx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up), alpha = 0.5)
+  } ### end non-grouped segment
+  ### make the plot look good (group agnostic)
   p <- p +
-    scico::scale_color_scico_d(begin=0.9, end=0.1, palette=pallt)+
-    scico::scale_fill_scico_d(begin=0.9, end=0.1, palette=pallt)+
     ggplot2::labs(
       title = paste("Real data vs predicted 95%", interval, "interval"),
       subtitle = paste("Model:", deparse(mod$call))
