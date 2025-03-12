@@ -100,12 +100,12 @@ multiPDF_Z <- function (x, seq_length, distributions, palette, var_name) {
   p <- p +
     scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
     ggplot2::theme(
-      text = ggplot2::element_text(size=14, family="mont"),
-      title = ggplot2::element_text(size=20, family = "mont", face = "bold"),
+      text = ggplot2::element_text(size=10, family="mont"),
+      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
       legend.position="bottom",
       legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
+      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
     )
   return(p)
 }
@@ -157,12 +157,12 @@ multiCDF_Z <- function (x, seq_length, distributions, palette, var_name) {
   p <- p +
     scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
     ggplot2::theme(
-      text = ggplot2::element_text(size=14, family="mont"),
-      title = ggplot2::element_text(size=20, family = "mont", face = "bold"),
+      text = ggplot2::element_text(size=10, family="mont"),
+      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
       legend.position="bottom",
       legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=16, family = "mont", face= "bold"),
+      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
     )
   return(p)
 }
