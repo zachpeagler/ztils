@@ -4,12 +4,15 @@
 \alias{no_outliers}
 \title{No outliers}
 \usage{
-no_outliers(df, x)
+no_outliers(df, var)
 }
 \arguments{
 \item{df}{The dataframe to subset}
 
-\item{x}{The variable to subset by}
+\item{var}{The variable to subset by}
+}
+\value{
+A dataframe without entries containing outliers in the selected variable.
 }
 \description{
 This function returns a dataframe subsetted to not include observations that

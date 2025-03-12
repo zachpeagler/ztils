@@ -6,16 +6,17 @@
 #' Outliers are defined by the quantiles +- 1.5 times the interquartile range.
 #' 
 #' @param df The dataframe to subset
-#' @param x The variable to subset by
+#' @param var The variable to subset by
+#' @returns A dataframe without entries containing outliers in the selected variable.
 #' @export
-no_outliers <- function(df, x) {
+no_outliers <- function(df, var) {
   # get quantiles
-  Qx <- quantile(x, probs=c(.25, .75), na.rm=FALSE)
+  Qvar <- quantile(var, probs=c(.25, .75), na.rm=FALSE)
   # get IQR
-  iqr_x <- IQR(x)
+  iqr_var <- IQR(var)
   # subset df
-  df <- subset(df, x > (Qx[1]-1.5*iqr_x) &
-                 x < (Qx[2]+1.5*iqr_x))
+  df <- subset(df, var > (Qvar[1]-1.5*iqr_var) &
+                 var < (Qvar[2]+1.5*iqr_var))
   return(df)
 }
 
@@ -27,144 +28,127 @@ no_outliers <- function(df, x) {
 #' Extremes are defined by the quantiles +- 3 times the interquartile range.
 #' 
 #' @param df The dataframe to subset
-#' @param x The variable to subset by
+#' @param var The variable to subset by
+#' @returns A dataframe without entries containing extremes in the selected variable.
 #' @export
-no_extremes <- function(df, x) {
+no_extremes <- function(df, var) {
   # get quantiles
-  Qx <- quantile(x, probs=c(.25, .75), na.rm=FALSE)
+  Qvar <- quantile(var, probs=c(.25, .75), na.rm=FALSE)
   # get IQR
-  iqr_x <- IQR(x)
+  iqr_var <- IQR(var)
   # subset df
-  df <- subset(df, x > (Qx[1]-3.0*iqr_x) &
-                 x < (Qx[2]+3.0*iqr_x))
+  df <- subset(df, var > (Qvar[1]-3.0*iqr_var) &
+                 var < (Qvar[2]+3.0*iqr_var))
   return(df)
 }
 
-
-#'glm_pseudoR2
+#' Multiple Proportional Density Functions for Continuous Variables
 #'
-#'A function for calculating the pseudo R^2 for a glm
+#' This function gets the proportional density functions for selected distributions
+#' against continuous, non-negative numbers. Possible distributions include "normal",
+#' "lognormal", "gamma", "exponential", and "all".
 #'
-#'@param mod The model for which to calculate the pseudoR^2
-#'@export
-glm_pseudoR2 <- function (mod) {
-  1 - (mod$deviance/mod$null.deviance)
-  }
-
-
-#' multiPDF_Z
-#' 
-#' This function is a version of MultiPDF_plot from my MultiFitR package that is customized to use
-#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the 
-#' base MultiFitR or MultiFitRgg packages.
-#' 
-#' @param x The variable to for which to plot PDFs
-#' @param seq_length The number of points over which to fit x
+#' @param var The variable of which to get the PDF
+#' @param seq_length The length of sequence to fit the distribution to
 #' @param distributions The distributions to fit x against
-#' @param palette The color palette to use on the graph
-#' @param var_name The variable name to use for x
-#' @returns A plot showing the PDF of the selected variable against the selected distributions over the selected sequence length
+#' @returns A dataframe with x, the real density, and the pdf of the desired
+#'  distributions with length (nrows) equal to seq_length +1.
 #' @export
-multiPDF_Z <- function (x, seq_length, distributions, palette, var_name) {
-  # check if "all" was passed to distributions
+multiPDF_cont <- function(var, seq_length = 50, distributions = "all"){
+  # get a sequence from the minimum to maximum of x with length
+  #equal to seq_length + 1
+  var_seq <- seq(min(var), max(var), length.out = seq_length+1)
+  # create real density for x
+  var_pdf <- density(var, n=seq_length+1)
+  # initialize df of x and the real density
+  pdf_df <- as.data.frame(var_seq)
+  pdf_df$dens = var_pdf$y
+  ## see if "all" is in distributions
   if ("all" %in% distributions) {
-    distributions <- c("normal",
-                       "lognormal",
-                       "gamma",
-                       "exponential")
+    distributions <- c("normal", "lognormal", "gamma", "exponential")
   }
-  # calculate PDFs
-  data <- multiFitR::multiPDF_cont(x, seq_length, distributions)
-
-  # create plot with real density
-  p <- ggplot2::ggplot(data) +
-    ggplot2::geom_line(aes(x=x_seq, y=dens, color="Real Density"), linetype = 2, linewidth = 3)+
-    ggplot2::xlab(var_name)+
-    ggplot2::ylab("PDF")+
-    ggplot2::labs(title=paste("PDF plot for", var_name, "over selected distributions"))+
-    ggplot2::guides(color=guide_legend(title="Distribution"))+
-    ggplot2::theme_bw()
-  # check for each type of distribution in the distributions, and add it if present
-  if ("normal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_normal, color='Normal'), linewidth = 2)
+  
+  if ("normal" %in% distributions) {
+    var_n <- MASS::fitdistr(var, "normal")
+    var_pdf_n <- dnorm(var_seq, mean=var_n$estimate[1],
+                     sd = var_n$estimate[2])
+    pdf_df$pdf_normal = var_pdf_n
   }
-  if ("lognormal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_lognormal, color='Lognormal'), linewidth = 2)
+  if ("lognormal" %in% distributions) {
+    var_ln <- MASS::fitdistr(var, "lognormal")
+    var_pdf_ln <- dlnorm(var_seq, meanlog=var_ln$estimate[1],
+                       sdlog = var_ln$estimate[2])
+    pdf_df$pdf_lognormal = var_pdf_ln
   }
-  if ("gamma" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_gamma, color='Gamma'), linewidth = 2)
+  if ("gamma" %in% distributions) {
+    var_g <- MASS::fitdistr(var, "gamma")
+    var_pdf_g <- dgamma(var_seq, shape=var_g$estimate[1],
+                      rate=var_g$estimate[2])
+    pdf_df$pdf_gamma = var_pdf_g
   }
-  if ("exponential" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=pdf_exponential, color='Exponential'), linewidth = 2)
+  if ("exponential" %in% distributions) {
+    var_exp <- MASS::fitdistr(var, "exponential")
+    var_pdf_exp <- dexp(var_seq, rate = var_exp$estimate)
+    pdf_df$pdf_exponential = var_pdf_exp
   }
-  p <- p +
-    scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
-    ggplot2::theme(
-      text = ggplot2::element_text(size=10, family="mont"),
-      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
-      legend.position="bottom",
-      legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
-    )
-  return(p)
+  ## return dataframe with pdfs
+  return(pdf_df)
 }
 
-#' multiCDF_Z
-#' 
-#' This function is a version of multiCDF_plot from my MultiFitR package that is customized to use
-#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the 
-#' base MultiFitR or MultiFitRgg packages. (showtext and scico)
-#' 
-#' @param x The variable to for which to plot CDFs
-#' @param seq_length The number of points over which to fit x
+#' Multiple Cumulative Distribution Functions for Continuous Variables
+#'
+#' This function gets the cumulative distribution function for selected distributions
+#' against a continuous, non-negative input variable. Possible distributions include "normal",
+#' "lognormal", "gamma", "exponential", "cauchy", "t", "weibull", "logistic",
+#' and "all".
+#'
+#' @param var The variable of which to get the CDF
+#' @param seq_length The length of sequence to fit the distribution to
 #' @param distributions The distributions to fit x against
-#' @param palette The color palette to use on the graph
-#' @param var_name The variable name to use for x
-#' @returns A plot showing the CDF of the selected variable against the selected distributions over the selected sequence length
+#' @returns A dataframe with x, the real density, and the pdf of the desired
+#'  distributions with length (nrows) equal to seq_length +1.
 #' @export
-multiCDF_Z <- function (x, seq_length, distributions, palette, var_name) {
-  # check if "all" was passed to distributions
+multiCDF_cont <- function(var, seq_length = 50, distributions = "all"){
+  # get a sequence from the minimum to maximum of x with length
+  #equal to seq_length + 1
+  var_seq <- seq(min(var), max(var), length.out = seq_length+1)
+  # create real cumulative density for x
+  var_cdf <- ecdf(var)(var_seq)
+  # initialize df of x and the cumulative density
+  cdf_df <- as.data.frame(var_seq)
+  cdf_df$dens = var_cdf
   if ("all" %in% distributions) {
     distributions <- c("normal",
                        "lognormal",
                        "gamma",
                        "exponential")
   }
-  # calculate CDFs
-  data <- multiFitR::multiCDF_cont(x, seq_length, distributions)
-  # create plot with real density
-  p <- ggplot2::ggplot(data) +
-    ggplot2::geom_line(aes(x=x_seq, y=dens, color="Real Distribution"), linetype = 2, linewidth = 3)+
-    ggplot2::xlab(var_name)+
-    ggplot2::ylab("CDF")+
-    ggplot2::labs(title=paste("CDF plot for", var_name, "over selected distributions"))+
-    ggplot2::guides(color=guide_legend(title="Distribution"))+
-    ggplot2::theme_bw()
-  # check for each type of distribution in the distributions, and add it if present
-  if ("normal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_normal, color='Normal'), linewidth = 2)
+  
+  if ("normal" %in% distributions) {
+    var_n <- MASS::fitdistr(var, "normal")
+    var_cdf_n <- pnorm(var_seq, mean=var_n$estimate[1],
+                     sd = var_n$estimate[2])
+    cdf_df$cdf_normal = var_cdf_n
   }
-  if ("lognormal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_lognormal, color='Lognormal'), linewidth = 2)
+  if ("lognormal" %in% distributions) {
+    var_ln <- MASS::fitdistr(var, "lognormal")
+    var_cdf_ln <- plnorm(var_seq, meanlog=var_ln$estimate[1],
+                       sdlog = var_ln$estimate[2])
+    cdf_df$cdf_lognormal = var_cdf_ln
   }
-  if ("gamma" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_gamma, color='Gamma'), linewidth = 2)
+  if ("gamma" %in% distributions) {
+    var_g <- MASS::fitdistr(var, "gamma")
+    var_cdf_g <- pgamma(var_seq, shape=var_g$estimate[1],
+                      rate=var_g$estimate[2])
+    cdf_df$cdf_gamma = var_cdf_g
   }
-  if ("exponential" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=x_seq, y=cdf_exponential, color='Exponential'), linewidth = 2)
+  if ("exponential" %in% distributions) {
+    var_exp <- MASS::fitdistr(var, "exponential")
+    var_cdf_exp <- pexp(var_seq, rate = var_exp$estimate)
+    cdf_df$cdf_exponential = var_cdf_exp
   }
-  p <- p +
-    scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
-    ggplot2::theme(
-      text = ggplot2::element_text(size=10, family="mont"),
-      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
-      legend.position="bottom",
-      legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
-    )
-  return(p)
+  
+  return(cdf_df)
 }
 
 #' Multiple Kolmogorov-Smirnov Tests for Continuous Variables
@@ -174,12 +158,12 @@ multiCDF_Z <- function (x, seq_length, distributions, palette, var_name) {
 #' "lognormal", "gamma", "exponential", "cauchy", "t", "weibull", "logistic",
 #' and "all".
 #'
-#' @param x The variable to perform KS tests against
+#' @param var The variable to perform KS tests against
 #' @param distributions The distributions to test x against
 #' @returns A dataframe with the distance and p value for each performed
 #' KS test
 #' @export
-multiKS_cont <- function(x, distributions) {
+multiKS_cont <- function(var, distributions) {
   # check if "all" was passed to distributions
   if ("all" %in% distributions) {
     distributions <- c("normal",
@@ -191,59 +175,52 @@ multiKS_cont <- function(x, distributions) {
   colnames(KS_df) <- c("Distribution", "Distance", "P-Value")
   # check normal
   if ("normal" %in% distributions) {
-    x_n <- MASS::fitdistr(x, "normal")
-    x_KS_n <- ks.test(x, "pnorm", mean=x_n$estimate[1],
-                      sd = x_n$estimate[2])
+    var_n <- MASS::fitdistr(var, "normal")
+    var_KS_n <- ks.test(var, "pnorm", mean=var_n$estimate[1],
+                      sd = var_n$estimate[2])
     KS_n <- data.frame(matrix(ncol=0, nrow=1))
     KS_n$Distribution <- "Normal"
-    KS_n$Distance <- if (is.null(x_KS_n$statistic)
-                         == FALSE) {x_KS_n$statistic}
+    KS_n$Distance <- if (!is.null(var_KS_n$statistic)) {var_KS_n$statistic}
     else {"NA"}
-    KS_n$PValue <- if (is.null(x_KS_n$p.value)
-                       == FALSE) {x_KS_n$p.value}
+    KS_n$PValue <- if (!is.null(var_KS_n$p.value)) {var_KS_n$p.value}
     else {"NA"}
     KS_df <- rbind(KS_df, KS_n)
   }
   if ("lognormal" %in% distributions) {
-    x_ln <- MASS::fitdistr(x, "lognormal")
-    x_KS_ln <- ks.test(x, "plnorm",
-                       meanlog=x_ln$estimate[1],
-                       sdlog = x_ln$estimate[2])[c(1, 2)]
+    var_ln <- MASS::fitdistr(var, "lognormal")
+    var_KS_ln <- ks.test(var, "plnorm",
+                       meanlog=var_ln$estimate[1],
+                       sdlog = var_ln$estimate[2])[c(1, 2)]
     KS_ln <- data.frame(matrix(ncol=0, nrow=1))
     KS_ln$Distribution <- "Lognormal"
-    KS_ln$Distance <- if (is.null(x_KS_ln$statistic)
-                          == FALSE) {x_KS_ln$statistic}
+    KS_ln$Distance <- if (!is.null(var_KS_ln$statistic)) {var_KS_ln$statistic}
     else {"NA"}
-    KS_ln$PValue <- if (is.null(x_KS_ln$p.value)
-                        == FALSE) {x_KS_ln$p.value}
+    KS_ln$PValue <- if (!is.null(var_KS_ln$p.value)) {var_KS_ln$p.value}
     else {"NA"}
     KS_df <- rbind(KS_df, KS_ln)
   }
   if ("gamma" %in% distributions) {
-    x_g <- MASS::fitdistr(x, "gamma")
-    x_KS_g <- ks.test(x, "pgamma", shape=x_g$estimate[1],
-                      rate=x_g$estimate[2])
+    var_g <- MASS::fitdistr(var, "gamma")
+    var_KS_g <- ks.test(var, "pgamma",
+                        shape=var_g$estimate[1],
+                        rate=var_g$estimate[2])
     KS_g <- data.frame(matrix(ncol=0, nrow=1))
     KS_g$Distribution <- "Gamma"
-    KS_g$Distance <- if (is.null(x_KS_g$statistic)
-                         == FALSE) {x_KS_g$statistic}
-    else {"NA"}
-    KS_g$PValue <- if (is.null(x_KS_g$p.value)
-                       == FALSE) {x_KS_g$p.value}
-    else {"NA"}
+    KS_g$Distance <- if (!is.null(var_KS_g$statistic)) {var_KS_g$statistic}
+                         else {"NA"}
+    KS_g$PValue <- if (!is.null(var_KS_g$p.value)) {var_KS_g$p.value}
+                      else {"NA"}
     KS_df <- rbind(KS_df, KS_g)
   }
   if ("exponential" %in% distributions) {
-    x_exp <- MASS::fitdistr(x, "exponential")
-    x_KS_exp <- ks.test(x, "pexp", rate = x_exp$estimate)
+    var_exp <- MASS::fitdistr(var, "exponential")
+    var_KS_exp <- ks.test(var, "pexp", rate = var_exp$estimate)
     KS_exp <- data.frame(matrix(ncol=0, nrow=1))
     KS_exp$Distribution <- "Exponential"
-    KS_exp$Distance <- if (is.null(x_KS_exp$statistic)
-                           == FALSE) {x_KS_exp$statistic}
-    else {"NA"}
-    KS_exp$PValue <- if (is.null(x_KS_exp$p.value)
-                         == FALSE) {x_KS_exp$p.value}
-    else {"NA"}
+    KS_exp$Distance <- if (!is.null(var_KS_exp$statistic)) {var_KS_exp$statistic}
+                        else {"NA"}
+    KS_exp$PValue <- if (!is.null(x_KS_exp$p.value)) {x_KS_exp$p.value}
+                        else {"NA"}
     KS_df <- rbind(KS_df, KS_exp)
   }
   
@@ -257,7 +234,138 @@ multiKS_cont <- function(x, distributions) {
   return(KS_df)
 }
 
-#' Prediction Group Plot
+#'glm_pseudoR2
+#'
+#'A function for calculating the pseudo R^2 for a glm
+#'
+#'@param mod The model for which to calculate the pseudoR^2
+#'@export
+glm_pseudoR2 <- function (mod) {
+  1 - (mod$deviance/mod$null.deviance)
+  }
+
+#' multiPDF_plot
+#' 
+#' This function is a version of MultiPDF_plot from my MultiFitR package that is customized to use
+#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the 
+#' base MultiFitR or MultiFitRgg packages.
+#' 
+#' @param var The variable to for which to plot PDFs
+#' @param seq_length The number of points over which to fit x
+#' @param distributions The distributions to fit x against
+#' @param palette The color palette to use on the graph
+#' @param var_name The variable name to use for x. If no name is provided, the function will grab the column name provided in x
+#' @returns A plot showing the PDF of the selected variable against the selected distributions over the selected sequence length
+#' @export
+multiPDF_plot <- function (var, seq_length = 50, distributions = "all", palette = "oslo", var_name = NULL) {
+  # check if "all" was passed to distributions
+  if ("all" %in% distributions) {
+    distributions <- c("normal",
+                       "lognormal",
+                       "gamma",
+                       "exponential")
+  }
+  # calculate PDFs
+  data <- multiPDF_cont(var, seq_length, distributions)
+  if (is.null(var_name)) {
+    var_name <- unlist(strsplit(deparse(substitute(var)), split="[$]"))[2]
+  }
+  # create plot with real density
+  p <- ggplot2::ggplot(data) +
+    ggplot2::geom_line(aes(x=var_seq, y=dens, color="Real Density"), linetype = 2, linewidth = 3)+
+    ggplot2::xlab(var_name)+
+    ggplot2::ylab("PDF")+
+    ggplot2::labs(title=paste("PDF plot for", var_name, "over selected distributions"))+
+    ggplot2::guides(color=guide_legend(title="Distribution"))+
+    ggplot2::theme_bw()
+  # check for each type of distribution in the distributions, and add it if present
+  if ("normal" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x=var_seq, y=pdf_normal, color='Normal'), linewidth = 2)
+  }
+  if ("lognormal" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x= var_seq, y=pdf_lognormal, color='Lognormal'), linewidth = 2)
+  }
+  if ("gamma" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x= var_seq, y=pdf_gamma, color='Gamma'), linewidth = 2)
+  }
+  if ("exponential" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x= var_seq, y=pdf_exponential, color='Exponential'), linewidth = 2)
+  }
+  p <- p +
+    scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
+    ggplot2::theme(
+      text = ggplot2::element_text(size=10, family="mont"),
+      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
+      legend.position="bottom",
+      legend.title.position = "top",
+      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+    )
+  return(p)
+}
+
+#' multiCDF_plot
+#' 
+#' This function is a version of multiCDF_plot from my MultiFitR package that is customized to use
+#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the 
+#' base MultiFitR or MultiFitRgg packages. (showtext and scico)
+#' 
+#' @param var The variable to for which to plot CDFs
+#' @param seq_length The number of points over which to fit x
+#' @param distributions The distributions to fit x against
+#' @param palette The color palette to use on the graph
+#' @param var_name The variable name to use for x
+#' @returns A plot showing the CDF of the selected variable against the selected distributions over the selected sequence length
+#' @export
+multiCDF_plot <- function (var, seq_length = 50, distributions = "all", palette = "oslo", var_name = NULL) {
+  # check if "all" was passed to distributions
+  if ("all" %in% distributions) {
+    distributions <- c("normal",
+                       "lognormal",
+                       "gamma",
+                       "exponential")
+  }
+  # calculate CDFs
+  data <- multiCDF_cont(var, seq_length, distributions)
+  # if var_name is not provided, get it from the input variable
+  if (is.null(var_name)) {
+    var_name <- unlist(strsplit(deparse(substitute(var)), split="[$]"))[2]
+  }
+  # create plot with real density
+  p <- ggplot2::ggplot(data) +
+    ggplot2::geom_line(aes(x=var_seq, y=dens, color="Real Distribution"), linetype = 2, linewidth = 3)+
+    ggplot2::xlab(var_name)+
+    ggplot2::ylab("CDF")+
+    ggplot2::labs(title=paste("CDF plot for", var_name, "over selected distributions"))+
+    ggplot2::guides(color=guide_legend(title="Distribution"))+
+    ggplot2::theme_bw()
+  # check for each type of distribution in the distributions, and add it if present
+  if ("normal" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_normal, color='Normal'), linewidth = 2)
+  }
+  if ("lognormal" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_lognormal, color='Lognormal'), linewidth = 2)
+  }
+  if ("gamma" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_gamma, color='Gamma'), linewidth = 2)
+  }
+  if ("exponential" %in% distributions == TRUE) {
+    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_exponential, color='Exponential'), linewidth = 2)
+  }
+  p <- p +
+    scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
+    ggplot2::theme(
+      text = ggplot2::element_text(size=10, family="mont"),
+      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
+      legend.position="bottom",
+      legend.title.position = "top",
+      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+    )
+  return(p)
+}
+
+#' Prediction Plot
 #' 
 #' This function uses a model, dataframe, and supplied predictor,response, and group variables to make predictions
 #' based off the model over a user-defined length with options to predict over the confidence or prediction

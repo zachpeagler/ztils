@@ -2,7 +2,7 @@
 % Please edit documentation in R/ztils.R
 \name{predict_plot}
 \alias{predict_plot}
-\title{Prediction Group Plot}
+\title{Prediction Plot}
 \usage{
 predict_plot(
   mod,

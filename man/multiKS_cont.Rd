@@ -4,10 +4,10 @@
 \alias{multiKS_cont}
 \title{Multiple Kolmogorov-Smirnov Tests for Continuous Variables}
 \usage{
-multiKS_cont(x, distributions)
+multiKS_cont(var, distributions)
 }
 \arguments{
-\item{x}{The variable to perform KS tests against}
+\item{var}{The variable to perform KS tests against}
 
 \item{distributions}{The distributions to test x against}
 }
