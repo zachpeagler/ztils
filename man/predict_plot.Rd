@@ -6,11 +6,11 @@
 \usage{
 predict_plot(
   mod,
-  dat,
+  data,
   rvar,
   pvar,
-  grp = NULL,
-  len = 50,
+  group = NULL,
+  length = 50,
   interval = "confidence",
   correction = "normal"
 )
@@ -18,15 +18,15 @@ predict_plot(
 \arguments{
 \item{mod}{the model used for predictions}
 
-\item{dat}{the data used to render the "real" points on the graph and for aggregating groups to determine prediction limits (should be the same as the data used in the model)}
+\item{data}{the data used to render the "real" points on the graph and for aggregating groups to determine prediction limits (should be the same as the data used in the model)}
 
 \item{rvar}{the response variable (y variable / variable the model is predicting)}
 
 \item{pvar}{the predictor variable (x variable / variable the model will predict against)}
 
-\item{grp}{the group; should be a factor; one response curve will be made for each group}
+\item{group}{the group; should be a factor; one response curve will be made for each group}
 
-\item{len}{the length of the variable over which to predict (higher = more resolution, essentially)}
+\item{length}{the length of the variable over which to predict (higher = more resolution, essentially)}
 
 \item{interval}{the type of interval to predict ("confidence" or "prediction")}
 

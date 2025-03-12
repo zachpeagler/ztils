@@ -5,19 +5,22 @@
 #' 
 #' Outliers are defined by the quantiles +- 1.5 times the interquartile range.
 #' 
-#' @param df The dataframe to subset
+#' @param data The data to subset
 #' @param var The variable to subset by
 #' @returns A dataframe without entries containing outliers in the selected variable.
 #' @export
-no_outliers <- function(df, var) {
+no_outliers <- function(data, var) {
+  # deparse variable
+  #d_var <- deparse(substitute(var))
+  d_var <- deparse(substitute(var))
   # get quantiles
-  Qvar <- quantile(var, probs=c(.25, .75), na.rm=FALSE)
+  Qvar <- quantile(data[[d_var]], probs=c(.25, .75), na.rm=TRUE)
   # get IQR
-  iqr_var <- IQR(var)
+  iqr_var <- IQR(data[[d_var]])
   # subset df
-  df <- subset(df, var > (Qvar[1]-1.5*iqr_var) &
-                 var < (Qvar[2]+1.5*iqr_var))
-  return(df)
+  data <- subset(data, data[[d_var]] > (Qvar[1]-1.5*iqr_var) &
+                 data[[d_var]] < (Qvar[2]+1.5*iqr_var))
+  return(data)
 }
 
 #' No extremes
@@ -27,19 +30,21 @@ no_outliers <- function(df, var) {
 #' 
 #' Extremes are defined by the quantiles +- 3 times the interquartile range.
 #' 
-#' @param df The dataframe to subset
-#' @param var The variable to subset by
+#' @param data The data to subset
+#' @param var The variable to subset by.
 #' @returns A dataframe without entries containing extremes in the selected variable.
 #' @export
-no_extremes <- function(df, var) {
+no_extremes <- function(data, var) {
+  # deparse variable
+  d_var <- deparse(substitute(var))
   # get quantiles
-  Qvar <- quantile(var, probs=c(.25, .75), na.rm=FALSE)
+  Qvar <- quantile(data[[d_var]], probs=c(.25, .75), na.rm=TRUE)
   # get IQR
-  iqr_var <- IQR(var)
-  # subset df
-  df <- subset(df, var > (Qvar[1]-3.0*iqr_var) &
-                 var < (Qvar[2]+3.0*iqr_var))
-  return(df)
+  iqr_var <- IQR(data[[d_var]])
+  # subset data
+  data <- subset(data, data[[d_var]] > (Qvar[1]-3*iqr_var) &
+                 data[[d_var]] < (Qvar[2]+3*iqr_var))
+  return(data)
 }
 
 #' Multiple Proportional Density Functions for Continuous Variables
@@ -48,7 +53,7 @@ no_extremes <- function(df, var) {
 #' against continuous, non-negative numbers. Possible distributions include "normal",
 #' "lognormal", "gamma", "exponential", and "all".
 #'
-#' @param var The variable of which to get the PDF
+#' @param var The variable of which to get the PDF.
 #' @param seq_length The length of sequence to fit the distribution to
 #' @param distributions The distributions to fit x against
 #' @returns A dataframe with x, the real density, and the pdf of the desired
@@ -238,7 +243,8 @@ multiKS_cont <- function(var, distributions) {
 #'
 #'A function for calculating the pseudo R^2 for a glm
 #'
-#'@param mod The model for which to calculate the pseudoR^2
+#'@param mod The model for which to calculate the pseudo R^2
+#'@returns The pseudo R^2 value of the model
 #'@export
 glm_pseudoR2 <- function (mod) {
   1 - (mod$deviance/mod$null.deviance)
@@ -378,39 +384,39 @@ multiCDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
 #' colorblind-accessible palettes.
 #' 
 #' @param mod the model used for predictions
-#' @param dat the data used to render the "real" points on the graph and for aggregating groups to determine prediction limits (should be the same as the data used in the model)
+#' @param data the data used to render the "real" points on the graph and for aggregating groups to determine prediction limits (should be the same as the data used in the model)
 #' @param rvar the response variable (y variable / variable the model is predicting)
 #' @param pvar the predictor variable (x variable / variable the model will predict against)
-#' @param grp the group; should be a factor; one response curve will be made for each group
-#' @param len the length of the variable over which to predict (higher = more resolution, essentially)
+#' @param group the group; should be a factor; one response curve will be made for each group
+#' @param length the length of the variable over which to predict (higher = more resolution, essentially)
 #' @param interval the type of interval to predict ("confidence" or "prediction")
 #' @param correction the type of correction to apply to the prediction ("normal", "exponential", or "logit")
 #' @returns A plot showing the real data and the model's predicted 95% CI or PI over a number of groups, with optional corrections.
 #' @export
-predict_plot <- function(mod, dat, rvar, pvar, grp = NULL, len = 50, interval = "confidence", correction = "normal") {
-  if (!is.null(dat[[deparse(substitute(grp))]])){ ## grouped prediciton plot
+predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, interval = "confidence", correction = "normal") {
+  if (!is.null(data[[deparse(substitute(group))]])){ ## grouped prediciton plot
     ### deparse variables
     d_pvar <- deparse(substitute(pvar))
     d_rvar <- deparse(substitute(rvar))
-    d_grp  <- deparse(substitute(grp))
+    d_group  <- deparse(substitute(group))
     ### get explicit names  of deparsed variables
     ### weird, but necessary for renaming the newdata (dx) columns \>_>/
-    pvar_name <- colnames(dat[d_pvar])
-    rvar_name <- colnames(dat[d_rvar])
-    grp_name  <- colnames(dat[d_grp])
+    pvar_name <- colnames(data[d_pvar])
+    rvar_name <- colnames(data[d_rvar])
+    group_name  <- colnames(data[d_group])
     ## get group data ready
-    grps  <- sort(unique(dat[[d_grp]]))
-    ngrps <- length(grps)
+    groups  <- sort(unique(data[[d_group]]))
+    ngroups <- length(groups)
     ## get predictor range for each group
-    agg <- aggregate(dat[[d_pvar]] ~ dat[[d_grp]], data = dat, range)
+    agg <- aggregate(data[[d_pvar]] ~ data[[d_group]], data = data, range)
     dx_pvar <- data.frame(pvar = numeric(0))
-    for (i in 1:ngrps) {
-      tpvar <- data.frame(pvar = seq(agg[[2]][i,1], agg[[2]][i,2], length = len))
+    for (i in 1:ngroups) {
+      tpvar <- data.frame(pvar = seq(agg[[2]][i,1], agg[[2]][i,2], length = length))
       dx_pvar <- rbind(dx_pvar, tpvar)
     }
-    dx <- data.frame(grp = rep(agg[[1]], each = len),
+    dx <- data.frame(group = rep(agg[[1]], each = length),
                      pvar = dx_pvar)
-    colnames(dx) <- c(grp_name, pvar_name)
+    colnames(dx) <- c(group_name, pvar_name)
     ## make prediction
     if (interval == "confidence") {
       ### we don't need to explicitly declare that it's a confidence interval, the predict function defaults to it
@@ -449,20 +455,20 @@ predict_plot <- function(mod, dat, rvar, pvar, grp = NULL, len = 50, interval = 
     } ### end prediction interval
     ## initialize plot with real data
     p <- ggplot2::ggplot() + 
-      ggplot2::geom_point(data = dat, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_grp]]))
+      ggplot2::geom_point(data = data, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_group]]))
     ## loop through treatments
-    for (g in 1:ngrps) {
-      flag <- which(dx[[d_grp]] == grps[g])
+    for (g in 1:ngroups) {
+      flag <- which(dx[[d_group]] == groups[g])
       tdx <- dx[flag,]
       p <- p + 
-        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=lo, color = .data[[d_grp]]),
+        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=lo, color = .data[[d_group]]),
                            linewidth=1, show.legend=FALSE)+
-        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=mn, color = .data[[d_grp]]),
+        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=mn, color = .data[[d_group]]),
                            linewidth=2, show.legend=FALSE)+
-        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=up, color = .data[[d_grp]]),
+        ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=up, color = .data[[d_group]]),
                            linewidth=1, show.legend=FALSE)+
         ggplot2::geom_ribbon(data=tdx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up,
-                                                    fill=.data[[d_grp]]), alpha = 0.5)
+                                                    fill=.data[[d_group]]), alpha = 0.5)
     }
   } else { ### non-grouped prediction plot
     ### deparse variables
@@ -470,10 +476,10 @@ predict_plot <- function(mod, dat, rvar, pvar, grp = NULL, len = 50, interval = 
     d_rvar <- deparse(substitute(rvar))
     ### get explicit names  of deparsed variables
     ### weird, but necessary for renaming the newdata (dx) columns \>_>/
-    pvar_name <- colnames(dat[d_pvar])
-    rvar_name <- colnames(dat[d_rvar])
+    pvar_name <- colnames(data[d_pvar])
+    rvar_name <- colnames(data[d_rvar])
     ## get predictor range
-    dx_pvar <- seq(min(dat[[d_pvar]]), max(dat[[d_pvar]]), len)
+    dx_pvar <- seq(min(data[[d_pvar]]), max(data[[d_pvar]]), length)
     dx <- data.frame(pvar = dx_pvar)
     colnames(dx) <- pvar_name
     ## make prediction
@@ -514,7 +520,7 @@ predict_plot <- function(mod, dat, rvar, pvar, grp = NULL, len = 50, interval = 
     } ### end prediction interval
     ## initialize plot with real data
     p <- ggplot2::ggplot() + 
-      ggplot2::geom_point(data = dat, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_pvar]]))
+      ggplot2::geom_point(data = data, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_pvar]]))
     ## add prediction
     p <- p + 
       ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=lo),

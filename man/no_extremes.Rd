@@ -4,12 +4,12 @@
 \alias{no_extremes}
 \title{No extremes}
 \usage{
-no_extremes(df, var)
+no_extremes(data, var)
 }
 \arguments{
-\item{df}{The dataframe to subset}
+\item{data}{The data to subset}
 
-\item{var}{The variable to subset by}
+\item{var}{The variable to subset by.}
 }
 \value{
 A dataframe without entries containing extremes in the selected variable.

@@ -4,10 +4,10 @@
 \alias{no_outliers}
 \title{No outliers}
 \usage{
-no_outliers(df, var)
+no_outliers(data, var)
 }
 \arguments{
-\item{df}{The dataframe to subset}
+\item{data}{The data to subset}
 
 \item{var}{The variable to subset by}
 }

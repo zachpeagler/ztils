@@ -7,7 +7,10 @@
 glm_pseudoR2(mod)
 }
 \arguments{
-\item{mod}{The model for which to calculate the pseudoR^2}
+\item{mod}{The model for which to calculate the pseudo R^2}
+}
+\value{
+The pseudo R^2 value of the model
 }
 \description{
 A function for calculating the pseudo R^2 for a glm

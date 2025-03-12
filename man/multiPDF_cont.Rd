@@ -7,7 +7,7 @@
 multiPDF_cont(var, seq_length = 50, distributions = "all")
 }
 \arguments{
-\item{var}{The variable of which to get the PDF}
+\item{var}{The variable of which to get the PDF.}
 
 \item{seq_length}{The length of sequence to fit the distribution to}
 
