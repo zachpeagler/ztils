@@ -224,7 +224,7 @@ multiKS_cont <- function(var, distributions) {
     KS_exp$Distribution <- "Exponential"
     KS_exp$Distance <- if (!is.null(var_KS_exp$statistic)) {var_KS_exp$statistic}
                         else {"NA"}
-    KS_exp$PValue <- if (!is.null(x_KS_exp$p.value)) {x_KS_exp$p.value}
+    KS_exp$PValue <- if (!is.null(var_KS_exp$p.value)) {var_KS_exp$p.value}
                         else {"NA"}
     KS_df <- rbind(KS_df, KS_exp)
   }
