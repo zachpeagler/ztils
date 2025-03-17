@@ -537,7 +537,7 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
       title = paste("Real data vs predicted 95%", interval, "interval"),
       subtitle = paste("Model:", deparse(mod$call))
     )+
-    ggplot2::theme_minimal()+
+    ggplot2::theme_bw()+
     ggplot2::theme(
       text = ggplot2::element_text(size=16),
       legend.position="right",
