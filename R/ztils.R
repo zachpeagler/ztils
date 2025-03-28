@@ -542,7 +542,7 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
       text = ggplot2::element_text(size=16),
       legend.position="right",
       axis.title = ggplot2::element_text(size=16, face= "bold"),
-      title = ggplot2::element_text(size=20, face="bold", lineheight = .5),
+      title = ggplot2::element_text(size=20, face="bold", lineheight = .8),
       plot.subtitle = ggplot2::element_text(size=14, face = "italic")
     )
   return(p)
