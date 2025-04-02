@@ -1,10 +1,10 @@
 #' No outliers
-#' 
+#'
 #' This function returns a dataframe subsetted to not include observations that
 #' are beyond the outliers of the specified variable.
-#' 
+#'
 #' Outliers are defined by the quantiles +- 1.5 times the interquartile range.
-#' 
+#'
 #' @param data The data to subset
 #' @param var The variable to subset by
 #' @returns A dataframe without entries containing outliers in the selected variable.
@@ -24,12 +24,12 @@ no_outliers <- function(data, var) {
 }
 
 #' No extremes
-#' 
+#'
 #' This function returns a dataframe subsetted to not include observations that
 #' are beyond the extremes of the specified variable.
-#' 
+#'
 #' Extremes are defined by the quantiles +- 3 times the interquartile range.
-#' 
+#'
 #' @param data The data to subset
 #' @param var The variable to subset by.
 #' @returns A dataframe without entries containing extremes in the selected variable.
@@ -72,7 +72,7 @@ multiPDF_cont <- function(var, seq_length = 50, distributions = "all"){
   if ("all" %in% distributions) {
     distributions <- c("normal", "lognormal", "gamma", "exponential")
   }
-  
+
   if ("normal" %in% distributions) {
     var_n <- MASS::fitdistr(var, "normal")
     var_pdf_n <- dnorm(var_seq, mean=var_n$estimate[1],
@@ -128,7 +128,7 @@ multiCDF_cont <- function(var, seq_length = 50, distributions = "all"){
                        "gamma",
                        "exponential")
   }
-  
+
   if ("normal" %in% distributions) {
     var_n <- MASS::fitdistr(var, "normal")
     var_cdf_n <- pnorm(var_seq, mean=var_n$estimate[1],
@@ -152,7 +152,7 @@ multiCDF_cont <- function(var, seq_length = 50, distributions = "all"){
     var_cdf_exp <- pexp(var_seq, rate = var_exp$estimate)
     cdf_df$cdf_exponential = var_cdf_exp
   }
-  
+
   return(cdf_df)
 }
 
@@ -160,15 +160,14 @@ multiCDF_cont <- function(var, seq_length = 50, distributions = "all"){
 #'
 #' This function gets the distance and p-value from a Kolmogorov-smirnov test for selected distributions
 #' against a continuous, non-negative input variable. Possible distributions include "normal",
-#' "lognormal", "gamma", "exponential", "cauchy", "t", "weibull", "logistic",
-#' and "all".
+#' "lognormal", "gamma", "exponential", "logistic", and "all".
 #'
 #' @param var The variable to perform KS tests against
 #' @param distributions The distributions to test x against
 #' @returns A dataframe with the distance and p value for each performed
 #' KS test
 #' @export
-multiKS_cont <- function(var, distributions) {
+multiKS_cont <- function(var, distributions = "all") {
   # check if "all" was passed to distributions
   if ("all" %in% distributions) {
     distributions <- c("normal",
@@ -228,14 +227,14 @@ multiKS_cont <- function(var, distributions) {
                         else {"NA"}
     KS_df <- rbind(KS_df, KS_exp)
   }
-  
+
   KS_df$Distribution = as.factor(KS_df$Distribution)
   KS_df$Distance = as.numeric(KS_df$Distance)
   KS_df$PValue = as.numeric(format(as.numeric(KS_df$PValue),
                                    scientific = FALSE))
   KS_df$Distance <- round(KS_df$Distance, 3)
   KS_df$PValue <- round(KS_df$PValue, 3)
-  
+
   return(KS_df)
 }
 
@@ -251,11 +250,11 @@ glm_pseudoR2 <- function (mod) {
   }
 
 #' multiPDF_plot
-#' 
+#'
 #' This function is a version of MultiPDF_plot from my MultiFitR package that is customized to use
-#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the 
+#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the
 #' base MultiFitR or MultiFitRgg packages.
-#' 
+#'
 #' @param var The variable to for which to plot PDFs
 #' @param seq_length The number of points over which to fit x
 #' @param distributions The distributions to fit x against
@@ -311,11 +310,11 @@ multiPDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
 }
 
 #' multiCDF_plot
-#' 
+#'
 #' This function is a version of multiCDF_plot from my MultiFitR package that is customized to use
-#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the 
+#' formatting that I like. However, this formatting uses several packages that I didn't want to include in the
 #' base MultiFitR or MultiFitRgg packages. (showtext and scico)
-#' 
+#'
 #' @param var The variable to for which to plot CDFs
 #' @param seq_length The number of points over which to fit x
 #' @param distributions The distributions to fit x against
@@ -372,17 +371,17 @@ multiCDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
 }
 
 #' Prediction Plot
-#' 
+#'
 #' This function uses a model, dataframe, and supplied predictor,response, and group variables to make predictions
 #' based off the model over a user-defined length with options to predict over the confidence or prediction
 #' interval and to apply a mathematical correction. You can also choose the color palette.
-#' 
-#' This function natively uses ggplot2 to graph the plot. 
+#'
+#' This function natively uses ggplot2 to graph the plot.
 #' This is because ggplot2 is beautiful and easy, and I hate making ugly (sorry) base R graphs.
-#' 
+#'
 #' This function natively uses the scico package color palettes. I highly recommend scico for easy to use,
 #' colorblind-accessible palettes.
-#' 
+#'
 #' @param mod the model used for predictions
 #' @param data the data used to render the "real" points on the graph and for aggregating groups to determine prediction limits (should be the same as the data used in the model)
 #' @param rvar the response variable (y variable / variable the model is predicting)
@@ -454,13 +453,13 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
       }
     } ### end prediction interval
     ## initialize plot with real data
-    p <- ggplot2::ggplot() + 
+    p <- ggplot2::ggplot() +
       ggplot2::geom_point(data = data, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_group]]))
     ## loop through treatments
     for (g in 1:ngroups) {
       flag <- which(dx[[d_group]] == groups[g])
       tdx <- dx[flag,]
-      p <- p + 
+      p <- p +
         ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=lo, color = .data[[d_group]]),
                            linewidth=1, show.legend=FALSE)+
         ggplot2::geom_line(data=tdx, ggplot2::aes(x=.data[[d_pvar]], y=mn, color = .data[[d_group]]),
@@ -519,10 +518,10 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
       }
     } ### end prediction interval
     ## initialize plot with real data
-    p <- ggplot2::ggplot() + 
+    p <- ggplot2::ggplot() +
       ggplot2::geom_point(data = data, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_pvar]]))
     ## add prediction
-    p <- p + 
+    p <- p +
       ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=lo),
                          linewidth=1, show.legend=FALSE)+
       ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=mn),

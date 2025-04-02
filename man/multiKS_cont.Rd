@@ -4,7 +4,7 @@
 \alias{multiKS_cont}
 \title{Multiple Kolmogorov-Smirnov Tests for Continuous Variables}
 \usage{
-multiKS_cont(var, distributions)
+multiKS_cont(var, distributions = "all")
 }
 \arguments{
 \item{var}{The variable to perform KS tests against}
@@ -18,6 +18,5 @@ KS test
 \description{
 This function gets the distance and p-value from a Kolmogorov-smirnov test for selected distributions
 against a continuous, non-negative input variable. Possible distributions include "normal",
-"lognormal", "gamma", "exponential", "cauchy", "t", "weibull", "logistic",
-and "all".
+"lognormal", "gamma", "exponential", "logistic", and "all".
 }
