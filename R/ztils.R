@@ -533,7 +533,7 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
   ### make the plot look good (group agnostic)
   p <- p +
     ggplot2::labs(
-      title = paste("Real data vs predicted 95%", interval, "interval"),
+      title = paste("Observed data vs predicted 95%", interval, "interval"),
       subtitle = paste("Model:", deparse(mod$call))
     )+
     ggplot2::theme_bw()+
