@@ -370,6 +370,58 @@ multiCDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
   return(p)
 }
 
+#' Principal Component Analysis Plot
+#'
+#' This function uses a group, PCA variables, and a "scaled" boolean to generate
+#' a biplot.
+#' @param group The group variable (column)
+#' @param pcavars The variables to include in the principle component analysis
+#' @param scaled A boolean (TRUE or FALSE) indicating if the pcavars are already scaled
+#' @returns A plot showing PC1 on the x axis, PC2 on the y axis, colored by group, with vectors and labels showing the individual pca variables.
+#' @export
+pca_plot <- function(group, pcavars, scaled = FALSE) {
+  gr <- sort(unique(group))
+  Groups <- gr[match(group, gr)]
+  if (scaled == FALSE) {
+    scaledvars <- data.frame(apply(pcavars, 2, scale))
+    p1 <- rda(scaledvars)
+  } else {
+    p1 <- rda(pcavars)
+  }
+  PC1val <- round(p1$CA$eig[1]/sum(p1$CA$eig), 4)*100
+  PC2val <- round(p1$CA$eig[2]/sum(p1$CA$eig), 4)*100
+  px <- scores(p1)$sites
+  vx <- scores(p1)$species
+  ggplot()+
+    geom_point(data=px, aes(x=PC1, y=PC2, color=Groups, fill=Groups), size=3)+
+    geom_segment(data = vx, aes(x=0, y=0, xend=PC1*.18, yend=PC2*.18), color = "black")+
+    annotate("text", x=vx[,1]*.2, y=vx[,2]*.2, label = rownames(vx))+
+    xlim(-1, 1)+
+    xlab(paste0("PC1 (", PC1val, "%)"))+
+    ylab(paste0("PC2 (", PC2val, "%)"))+
+    theme_bw()
+}
+
+#' Principal Component Analysis Data
+#'
+#' This function uses a dataframe, PCA variables, and a "scaled" boolean to generate
+#' a dataframe with principal components as columns.
+#' @param data The dataframe to add principal components to.
+#' @param pcavars The variables to include in the principle component analysis
+#' @param scaled A boolean (TRUE or FALSE) indicating if the pcavars are already scaled
+#' @returns A plot showing PC1 on the x axis, PC2 on the y axis, colored by group, with vectors and labels showing the individual pca variables.
+#' @export
+pca_data <- function(data, pcavars, scaled = FALSE){
+  if (scaled == FALSE) {
+    scaledvars <- data.frame(apply(pcavars, 2, scale))
+    p1 <- rda(scaledvars)
+  } else {
+    p1 <- rda(pcavars)
+  }
+  outdata <- cbind(data, p1$CA$u)
+  return(outdata)
+}
+
 #' Prediction Plot
 #'
 #' This function uses a model, dataframe, and supplied predictor,response, and group variables to make predictions
