@@ -1,0 +1,3 @@
+- [ ] implement proper testing with testthat
+- [ ] add vignettes
+- [ ] improve function error codes to be more descriptive

@@ -160,7 +160,7 @@ multiCDF_cont <- function(var, seq_length = 50, distributions = "all"){
 #'
 #' This function gets the distance and p-value from a Kolmogorov-smirnov test for selected distributions
 #' against a continuous, non-negative input variable. Possible distributions include "normal",
-#' "lognormal", "gamma", "exponential", "logistic", and "all".
+#' "lognormal", "gamma", "exponential", and "all".
 #'
 #' @param var The variable to perform KS tests against
 #' @param distributions The distributions to test x against
@@ -175,7 +175,9 @@ multiKS_cont <- function(var, distributions = "all") {
                        "gamma",
                        "exponential")
   }
+  # dummy data frame
   KS_df <- data.frame(matrix(ncol=3, nrow=0))
+  # set column names
   colnames(KS_df) <- c("Distribution", "Distance", "P-Value")
   # check normal
   if ("normal" %in% distributions) {
@@ -184,12 +186,15 @@ multiKS_cont <- function(var, distributions = "all") {
                       sd = var_n$estimate[2])
     KS_n <- data.frame(matrix(ncol=0, nrow=1))
     KS_n$Distribution <- "Normal"
-    KS_n$Distance <- if (!is.null(var_KS_n$statistic)) {var_KS_n$statistic}
-    else {"NA"}
-    KS_n$PValue <- if (!is.null(var_KS_n$p.value)) {var_KS_n$p.value}
-    else {"NA"}
+    KS_n$Distance <- if (!is.null(var_KS_n$statistic)) {
+      var_KS_n$statistic
+      } else {"NA"}
+    KS_n$PValue <- if (!is.null(var_KS_n$p.value)) {
+      var_KS_n$p.value
+      } else {"NA"}
     KS_df <- rbind(KS_df, KS_n)
   }
+  # check lognormal
   if ("lognormal" %in% distributions) {
     var_ln <- MASS::fitdistr(var, "lognormal")
     var_KS_ln <- ks.test(var, "plnorm",
@@ -197,12 +202,15 @@ multiKS_cont <- function(var, distributions = "all") {
                        sdlog = var_ln$estimate[2])[c(1, 2)]
     KS_ln <- data.frame(matrix(ncol=0, nrow=1))
     KS_ln$Distribution <- "Lognormal"
-    KS_ln$Distance <- if (!is.null(var_KS_ln$statistic)) {var_KS_ln$statistic}
-    else {"NA"}
-    KS_ln$PValue <- if (!is.null(var_KS_ln$p.value)) {var_KS_ln$p.value}
-    else {"NA"}
+    KS_ln$Distance <- if (!is.null(var_KS_ln$statistic)) {
+      var_KS_ln$statistic
+      } else {"NA"}
+    KS_ln$PValue <- if (!is.null(var_KS_ln$p.value)) {
+      var_KS_ln$p.value
+      } else {"NA"}
     KS_df <- rbind(KS_df, KS_ln)
   }
+  # check gamma
   if ("gamma" %in% distributions) {
     var_g <- MASS::fitdistr(var, "gamma")
     var_KS_g <- ks.test(var, "pgamma",
@@ -210,28 +218,32 @@ multiKS_cont <- function(var, distributions = "all") {
                         rate=var_g$estimate[2])
     KS_g <- data.frame(matrix(ncol=0, nrow=1))
     KS_g$Distribution <- "Gamma"
-    KS_g$Distance <- if (!is.null(var_KS_g$statistic)) {var_KS_g$statistic}
-                         else {"NA"}
-    KS_g$PValue <- if (!is.null(var_KS_g$p.value)) {var_KS_g$p.value}
-                      else {"NA"}
+    KS_g$Distance <- if (!is.null(var_KS_g$statistic)) {
+      var_KS_g$statistic
+      } else {"NA"}
+    KS_g$PValue <- if (!is.null(var_KS_g$p.value)) {
+      var_KS_g$p.value
+      } else {"NA"}
     KS_df <- rbind(KS_df, KS_g)
   }
+  # check exponential
   if ("exponential" %in% distributions) {
     var_exp <- MASS::fitdistr(var, "exponential")
     var_KS_exp <- ks.test(var, "pexp", rate = var_exp$estimate)
     KS_exp <- data.frame(matrix(ncol=0, nrow=1))
     KS_exp$Distribution <- "Exponential"
-    KS_exp$Distance <- if (!is.null(var_KS_exp$statistic)) {var_KS_exp$statistic}
-                        else {"NA"}
-    KS_exp$PValue <- if (!is.null(var_KS_exp$p.value)) {var_KS_exp$p.value}
-                        else {"NA"}
+    KS_exp$Distance <- if (!is.null(var_KS_exp$statistic)) {
+      var_KS_exp$statistic
+      } else {"NA"}
+    KS_exp$PValue <- if (!is.null(var_KS_exp$p.value)) {
+      var_KS_exp$p.value
+      } else {"NA"}
     KS_df <- rbind(KS_df, KS_exp)
   }
-
+  # make sure types are correct and rounded for interpretability
   KS_df$Distribution = as.factor(KS_df$Distribution)
   KS_df$Distance = as.numeric(KS_df$Distance)
-  KS_df$PValue = as.numeric(format(as.numeric(KS_df$PValue),
-                                   scientific = FALSE))
+  KS_df$PValue = as.numeric(format(as.numeric(KS_df$PValue), scientific = FALSE))
   KS_df$Distance <- round(KS_df$Distance, 3)
   KS_df$PValue <- round(KS_df$PValue, 3)
 
