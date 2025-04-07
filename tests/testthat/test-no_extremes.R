@@ -5,7 +5,7 @@ test_that("extremes will leave", {
   expect_equal(nrow(netdat), 82)
 })
 
-test_that("no extremes remain") {
+test_that("no extremes remain", {
   set.seed(123)
   tdat <- data.frame(x = rlnorm(100, 0, 5))
   netdat <- no_extremes(tdat, x)
@@ -20,4 +20,4 @@ test_that("no extremes remain") {
     p_out <- FALSE
   }
   expect_equal(p_out, FALSE)
-}
+})

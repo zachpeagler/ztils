@@ -337,6 +337,7 @@ pca_data(iris, iris[,c(1:4)], FALSE)
 ### Description
 This function performs a prediction based on the supplied **model**, then graphs it using *ggplot2*. Options are available for predicting based on the confidence or prediction interval, as well as for applying corrections, such as exponential and logistic.
 
+> I would like to alter this function to reduce the number of required inputs, as all the information *should* be available from the model call, but that's a work in progress.
 ### Usage
 ```{r}
 predict_plot(mod,
@@ -346,19 +347,34 @@ predict_plot(mod,
              group = NULL,
              length = 50,
              interval = "confidence",
-             correction = "normal"
+             correction = "normal",
+             palette = "oslo"
              )
 ```
 
 ### Arguments
-
+- **mod**: A univariate linear model to base predictions on.
+- **data**: The dataframe used in the model. Will be used to pull variables for plotting.
+- **rvar**: The response variable (y-axis), must be the same as the one in the model
+- **pvar**: The predictor variable (x-axis), must be the same as the one in the model.
+- **group**: An optional grouping variable. If a group is present, separate predictions will be made for each group.
+- **length**: The length to predict over. A longer length will result in more precision.
+- **interval**: Tells the function to predict over either the confidence interval or the prediction interval.
+  - "confidence" or "prediction"
+- **correction**: If you log transform or logit transform the variables in the model, you can choose to apply a correction to the predicted output to reverse that transformation.
+  - "normal", "exponential", or "logit"
+- **palette**: A *scico* palette used to color the graph. For all possible palettes, call **scico_palette_names()**. If non-scico palettes are desired, the palette can be overridden with scale_color and scale_fill functions.
 
 ### Returns
+Returns a plot with the observed (real) data plotted as points and the prediction plotted as lines, with a 95% confidence or prediction interval.
 
+> This function has a known issue with the colors on ungrouped predictions being kind of funky, as the function uses the predictor variable (x-axis) for the color, which works for the actual data (points), but doesn't translate well to the predicted lines and ribbon.
 
 ### Examples
 ```{r}
+mod1 <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
 
+predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)
 ```
 
 <br>

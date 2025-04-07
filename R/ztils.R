@@ -477,9 +477,10 @@ pca_data <- function(data, pcavars, scaled = FALSE){
 #' @param length the length of the variable over which to predict (higher = more resolution, essentially)
 #' @param interval the type of interval to predict ("confidence" or "prediction")
 #' @param correction the type of correction to apply to the prediction ("normal", "exponential", or "logit")
+#' @param palette the color palette used to color the graph, with each group corresponding to a color
 #' @returns A plot showing the real data and the model's predicted 95% CI or PI over a number of groups, with optional corrections.
 #' @export
-predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, interval = "confidence", correction = "normal") {
+predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, interval = "confidence", correction = "normal", palette = "oslo") {
   if (!is.null(data[[deparse(substitute(group))]])){ ## grouped prediciton plot
     ### deparse variables
     d_pvar <- deparse(substitute(pvar))
@@ -556,6 +557,9 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
         ggplot2::geom_ribbon(data=tdx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up,
                                                     fill=.data[[d_group]]), alpha = 0.5)
     }
+    p <- p +
+      scico::scale_color_scico_d(begin=0.9, end=0.1, palette=palette)+
+      scico::scale_fill_scico_d(begin=0.9, end=0.1, palette=palette)
   } else { ### non-grouped prediction plot
     ### deparse variables
     d_pvar <- deparse(substitute(pvar))
@@ -565,7 +569,9 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
     pvar_name <- colnames(data[d_pvar])
     rvar_name <- colnames(data[d_rvar])
     ## get predictor range
-    dx_pvar <- seq(min(data[[d_pvar]]), max(data[[d_pvar]]), length)
+    dx_pvar <- seq(min(data[[d_pvar]]), max(data[[d_pvar]]), length.out = length)
+    # DEBUG:
+    print(dx_pvar)
     dx <- data.frame(pvar = dx_pvar)
     colnames(dx) <- pvar_name
     ## make prediction
@@ -587,8 +593,7 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
         dx$up <- qnorm(0.975, pred$fit, pred$se.fit)
       }
     } else { ### prediction interval
-      pred <- predict(mod, newdata = dx, se.fit = TRUE,
-                      type = "response", interval = "prediction")
+      pred <- predict(mod, newdata = dx, se.fit = TRUE, type = "response", interval = "prediction")
       ### check for correction type
       if (correction == "exponential") {
         dx$mn <- exp(pred$fit[,"fit"])
@@ -604,6 +609,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
         dx$up <- pred$fit[,"upr"]
       }
     } ### end prediction interval
+    # DEBUG:
+    print(head(dx, 5))
     ## initialize plot with real data
     p <- ggplot2::ggplot() +
       ggplot2::geom_point(data = data, ggplot2::aes(x=.data[[d_pvar]], y=.data[[d_rvar]], color=.data[[d_pvar]]))
@@ -615,7 +622,9 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
                          linewidth=2, show.legend=FALSE)+
       ggplot2::geom_line(data=dx, ggplot2::aes(x=.data[[d_pvar]], y=up),
                          linewidth=1, show.legend=FALSE)+
-      ggplot2::geom_ribbon(data=dx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up), alpha = 0.5)
+      ggplot2::geom_ribbon(data=dx, ggplot2::aes(x=.data[[d_pvar]], ymin=lo, ymax=up), alpha = 0.5)+
+      scico::scale_color_scico(begin=0.9, end=0.1, palette=palette)+
+      scico::scale_fill_scico(begin=0.9, end=0.1, palette=palette)
   } ### end non-grouped segment
   ### make the plot look good (group agnostic)
   p <- p +
@@ -625,10 +634,9 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL, length = 50, inter
     )+
     ggplot2::theme_bw()+
     ggplot2::theme(
-      text = ggplot2::element_text(size=16),
-      legend.position="right",
-      axis.title = ggplot2::element_text(size=16, face= "bold"),
-      title = ggplot2::element_text(size=20, face="bold", lineheight = .8),
+      text = ggplot2::element_text(size=12),
+      axis.title = ggplot2::element_text(size=14, face= "bold"),
+      title = ggplot2::element_text(size=16, face="bold"),
       plot.subtitle = ggplot2::element_text(size=14, face = "italic")
     )
   return(p)

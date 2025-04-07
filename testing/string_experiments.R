@@ -10,3 +10,9 @@ tfunc <- function(var) {
 
 t <- tfunc(iris$Sepal.Length)
 t2 <- tfunc(iris[["Sepal.Length"]])
+
+
+# predict plot testing
+mod1 <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
+
+predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)

@@ -5,7 +5,7 @@ test_that("outliers will leave", {
   expect_equal(nrow(notdat),79)
 })
 
-test_that("no outliers remain") {
+test_that("no outliers remain", {
   set.seed(123)
   tdat <- data.frame(x = rlnorm(100, 0, 5))
   notdat <- no_outliers(tdat, x)
@@ -20,4 +20,4 @@ test_that("no outliers remain") {
     p_out <- FALSE
   }
   expect_equal(p_out, FALSE)
-}
+})

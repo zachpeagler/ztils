@@ -12,7 +12,8 @@ predict_plot(
   group = NULL,
   length = 50,
   interval = "confidence",
-  correction = "normal"
+  correction = "normal",
+  palette = "oslo"
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ predict_plot(
 \item{interval}{the type of interval to predict ("confidence" or "prediction")}
 
 \item{correction}{the type of correction to apply to the prediction ("normal", "exponential", or "logit")}
+
+\item{palette}{the color palette used to color the graph, with each group corresponding to a color}
 }
 \value{
 A plot showing the real data and the model's predicted 95\% CI or PI over a number of groups, with optional corrections.
