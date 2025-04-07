@@ -142,7 +142,7 @@ A plot showing the PDF of the selected variable against the selected distributio
 - **var**: the variable of which to get the PDF
 - **seq_length**: the length to fit the distribution against
 - **distributions**: the distributions to fit **var** against
-- **palette**: A *scico* palette to use on the graph, with each distribution corresponding to a color.
+- **palette**: A *scico* palette to use on the graph, with each distribution corresponding to a color. For all possible palettes, call **scico_palette_names()**.
 - **var_name**: A name to use in the title and x axis label of the plot.
 
 ### Examples
@@ -221,7 +221,7 @@ A plot showing the CDF of the selected variable against the selected distributio
 - **var**: the variable of which to get the CDF
 - **seq_length**: the length to fit the distribution against
 - **distributions**: the distributions to fit **var** against
-- **palette**: A *scico* palette to use on the graph, with each distribution corresponding to a color.
+- **palette**: A *scico* palette to use on the graph, with each distribution corresponding to a color. For all possible palettes, call **scico_palette_names()**.
 - **var_name**: A name to use in the title and x axis label of the plot.
 
 ### Examples
@@ -270,16 +270,84 @@ multiKS_cont(iris$Sepal.Length, c("normal", "lognormal"))
 
 
 
-
-
-## function()
+## pca_plot()
 
 ### Description
-
+This function performs a principal component analysis (PCA) for the selected **pcavars** with the option to automatically scale the variables. It then graphs PC1 on the x axis and PC2 on the y-axis using *ggplot2*, coloring the graph with a *scico* palette over the specified **groups**. This is similar to the *biplot* command from the *stats* package, but performs all the steps required in graphing a PCA for you.
 
 ### Usage
 ```{r}
+pca_plot(group,
+         pcavars,
+         scaled = FALSE,
+         palette = "oslo
+         )
+```
 
+### Arguments
+- **group**: The group column, used for assigning colors.
+- **pcavars**: The variables (columns) to perform a principal component analysis on. Should be *explanatory* variables and not *response* variables.
+- **scaled**: A boolean (TRUE or FALSE) indicated if the **pcavars** have already been scaled or if they should be scaled in the function.
+- **palette**: A *scico* palette used to color the graph. For all possible palettes, call **scico_palette_names()**. If non-scico palettes are desired, the palette can be overridden with scale_color and scale_fill functions.
+
+### Returns
+A ggplot object showing PC1 on the x axis and PC2 on the y axis, colored by group with vectors and labels showing the individual pca variables.
+
+### Examples
+```{r}
+pca_plot(iris$Species, iris[,c(1:4)])
+
+pca_plot(iris$Species, iris[,c(1:4)], FALSE, "bilbao")
+```
+
+<br>
+
+
+## pca_data()
+
+### Description
+This function performs a principal component analysis (PCA) on the specified variables, **pcavars** and attaches the resulting principal components to the specified dataframe, **data**, with optional variable scaling.
+
+### Usage
+```{r}
+pca_data(data,
+         pcavars,
+         scaled = FALSE
+         )
+```
+
+### Arguments
+- **data**: The dataframe to attach principal components to.
+- **pcavars**: The variables to use in the principal component analysis.
+- **scaled**: A logical value (TRUE or FALSE) indicating if **pcavars** have already been scaled or if they should be scaled in the function.
+
+### Returns
+Returns a dataframe with principal components as additional columns.
+
+### Examples
+```{r}
+pca_data(iris, iris[,c(1:4)], FALSE)
+```
+
+<br>
+
+
+## predict_plot()
+
+### Description
+This function performs a prediction based on the supplied **model**, then graphs it using *ggplot2*. Options are available for predicting based on the confidence or prediction interval, as well as for applying corrections, such as exponential and logistic.
+
+### Usage
+```{r}
+predict_plot(mod,
+             data,
+             rvar,
+             pvar,
+             group = NULL,
+             length = 50,
+             interval = "confidence",
+             correction = "normal"
+             )
 ```
 
 ### Arguments

@@ -285,7 +285,11 @@ multiPDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
   # calculate PDFs
   data <- multiPDF_cont(var, seq_length, distributions)
   if (is.null(var_name)) {
-    var_name <- unlist(strsplit(deparse(substitute(var)), split="[$]"))[2]
+    if (grepl("[$]", deparse(substitute(var))) == TRUE) {
+      var_name <- unlist(strsplit(deparse(substitute(var)), split="[$]"))[2]
+    } else {
+      var_name <- unlist(strsplit(deparse(substitute(var)), split="[\"]"))[2]
+    }
   }
   # create plot with real density
   p <- ggplot2::ggplot(data) +
@@ -293,7 +297,7 @@ multiPDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
     ggplot2::xlab(var_name)+
     ggplot2::ylab("PDF")+
     ggplot2::labs(title=paste("PDF plot for", var_name, "over selected distributions"))+
-    ggplot2::guides(color=guide_legend(title="Distribution"))+
+    ggplot2::guides(color=ggplot2::guide_legend(title="Distribution"))+
     ggplot2::theme_bw()
   # check for each type of distribution in the distributions, and add it if present
   if ("normal" %in% distributions == TRUE) {
@@ -346,38 +350,42 @@ multiCDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
   data <- multiCDF_cont(var, seq_length, distributions)
   # if var_name is not provided, get it from the input variable
   if (is.null(var_name)) {
-    var_name <- unlist(strsplit(deparse(substitute(var)), split="[$]"))[2]
+    if (grepl("[$]", deparse(substitute(var))) == TRUE) {
+      var_name <- unlist(strsplit(deparse(substitute(var)), split="[$]"))[2]
+    } else {
+      var_name <- unlist(strsplit(deparse(substitute(var)), split="[\"]"))[2]
+    }
   }
   # create plot with real density
   p <- ggplot2::ggplot(data) +
-    ggplot2::geom_line(aes(x=var_seq, y=dens, color="Real Distribution"), linetype = 2, linewidth = 3)+
+    ggplot2::geom_line(ggplot2::aes(x=var_seq, y=dens, color="Real Distribution"), linetype = 2, linewidth = 3)+
     ggplot2::xlab(var_name)+
     ggplot2::ylab("CDF")+
     ggplot2::labs(title=paste("CDF plot for", var_name, "over selected distributions"))+
-    ggplot2::guides(color=guide_legend(title="Distribution"))+
+    ggplot2::guides(color=ggplot2::guide_legend(title="Distribution"))+
     ggplot2::theme_bw()
   # check for each type of distribution in the distributions, and add it if present
   if ("normal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_normal, color='Normal'), linewidth = 2)
+    p <- p + ggplot2::geom_line(ggplot2::aes(x=var_seq, y=cdf_normal, color='Normal'), linewidth = 2)
   }
   if ("lognormal" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_lognormal, color='Lognormal'), linewidth = 2)
+    p <- p + ggplot2::geom_line(ggplot2::aes(x=var_seq, y=cdf_lognormal, color='Lognormal'), linewidth = 2)
   }
   if ("gamma" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_gamma, color='Gamma'), linewidth = 2)
+    p <- p + ggplot2::geom_line(ggplot2::aes(x=var_seq, y=cdf_gamma, color='Gamma'), linewidth = 2)
   }
   if ("exponential" %in% distributions == TRUE) {
-    p <- p + ggplot2::geom_line(aes(x=var_seq, y=cdf_exponential, color='Exponential'), linewidth = 2)
+    p <- p + ggplot2::geom_line(ggplot2::aes(x=var_seq, y=cdf_exponential, color='Exponential'), linewidth = 2)
   }
   p <- p +
     scico::scale_color_scico_d(begin=0.9, end=0, palette = palette)+
     ggplot2::theme(
-      text = ggplot2::element_text(size=10, family="mont"),
-      title = ggplot2::element_text(size=14, family = "mont", face = "bold"),
+      text = ggplot2::element_text(size=10),
+      title = ggplot2::element_text(size=14, face = "bold"),
       legend.position="bottom",
       legend.title.position = "top",
-      legend.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
-      axis.title = ggplot2::element_text(size=12, family = "mont", face= "bold"),
+      legend.title = ggplot2::element_text(size=12, face= "bold"),
+      axis.title = ggplot2::element_text(size=12, face= "bold"),
     )
   return(p)
 }
@@ -385,33 +393,47 @@ multiCDF_plot <- function (var, seq_length = 50, distributions = "all", palette 
 #' Principal Component Analysis Plot
 #'
 #' This function uses a group, PCA variables, and a "scaled" boolean to generate
-#' a biplot.
+#' a biplot.using ggplot2
 #' @param group The group variable (column)
 #' @param pcavars The variables to include in the principle component analysis
 #' @param scaled A boolean (TRUE or FALSE) indicating if the pcavars are already scaled
+#' @param palette A color palette to use on the plot, with each group assigned to a color.
 #' @returns A plot showing PC1 on the x axis, PC2 on the y axis, colored by group, with vectors and labels showing the individual pca variables.
 #' @export
-pca_plot <- function(group, pcavars, scaled = FALSE) {
+pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
+  # prepare groups
   gr <- sort(unique(group))
   Groups <- gr[match(group, gr)]
+  # prepare scaled logical
+  scaled = as.logical(scaled)
+  # check for scaled and perform pca
   if (scaled == FALSE) {
     scaledvars <- data.frame(apply(pcavars, 2, scale))
-    p1 <- rda(scaledvars)
+    p1 <- vegan::rda(scaledvars)
   } else {
-    p1 <- rda(pcavars)
+    p1 <- vegan::rda(pcavars)
   }
+  # get PC1 and PC2 values
   PC1val <- round(p1$CA$eig[1]/sum(p1$CA$eig), 4)*100
   PC2val <- round(p1$CA$eig[2]/sum(p1$CA$eig), 4)*100
-  px <- scores(p1)$sites
-  vx <- scores(p1)$species
-  ggplot()+
-    geom_point(data=px, aes(x=PC1, y=PC2, color=Groups, fill=Groups), size=3)+
-    geom_segment(data = vx, aes(x=0, y=0, xend=PC1*.18, yend=PC2*.18), color = "black")+
-    annotate("text", x=vx[,1]*.2, y=vx[,2]*.2, label = rownames(vx))+
-    xlim(-1, 1)+
-    xlab(paste0("PC1 (", PC1val, "%)"))+
-    ylab(paste0("PC2 (", PC2val, "%)"))+
-    theme_bw()
+  # get sites and species
+  px <- vegan::scores(p1)$sites
+  vx <- vegan::scores(p1)$species
+  # plot
+  ggplot2::ggplot()+
+    ggplot2::geom_point(data=px, ggplot2::aes(x=PC1, y=PC2, color=Groups, fill=Groups), size=3)+
+    ggplot2::geom_segment(data = vx, ggplot2::aes(x=0, y=0, xend=PC1*.25, yend=PC2*.25), color = "black")+
+    ggplot2::annotate("text", x=vx[,1]*.27, y=vx[,2]*.27, label = rownames(vx))+
+    ggplot2::xlab(paste0("PC1 (", PC1val, "%)"))+
+    ggplot2::ylab(paste0("PC2 (", PC2val, "%)"))+
+    scico::scale_color_scico_d(begin=0.9, end=0.1, palette=palette)+
+    scico::scale_fill_scico_d(begin=0.9, end=0.1, palette=palette)+
+    ggplot2::theme_bw()+
+    ggplot2::theme(
+      text = ggplot2::element_text(size=10),
+      legend.title = ggplot2::element_text(size=12, face= "bold"),
+      axis.title = ggplot2::element_text(size=12, face= "bold"),
+    )
 }
 
 #' Principal Component Analysis Data
@@ -424,11 +446,12 @@ pca_plot <- function(group, pcavars, scaled = FALSE) {
 #' @returns A plot showing PC1 on the x axis, PC2 on the y axis, colored by group, with vectors and labels showing the individual pca variables.
 #' @export
 pca_data <- function(data, pcavars, scaled = FALSE){
+  scaled = as.logical(scaled)
   if (scaled == FALSE) {
     scaledvars <- data.frame(apply(pcavars, 2, scale))
-    p1 <- rda(scaledvars)
+    p1 <- vegan::rda(scaledvars)
   } else {
-    p1 <- rda(pcavars)
+    p1 <- vegan::rda(pcavars)
   }
   outdata <- cbind(data, p1$CA$u)
   return(outdata)
