@@ -78,19 +78,19 @@ multipdf_cont <- function(var, seq_length = 50, distributions = "all") {
   if ("normal" %in% distributions) {
     var_n <- MASS::fitdistr(var, "normal")
     var_pdf_n <- stats::dnorm(var_seq, mean = var_n$estimate[1],
-                       sd = var_n$estimate[2])
+                              sd = var_n$estimate[2])
     pdf_df$pdf_normal <- var_pdf_n
   }
   if ("lognormal" %in% distributions) {
     var_ln <- MASS::fitdistr(var, "lognormal")
     var_pdf_ln <- stats::dlnorm(var_seq, meanlog = var_ln$estimate[1],
-                         sdlog = var_ln$estimate[2])
+                                sdlog = var_ln$estimate[2])
     pdf_df$pdf_lognormal <- var_pdf_ln
   }
   if ("gamma" %in% distributions) {
     var_g <- MASS::fitdistr(var, "gamma")
     var_pdf_g <- stats::dgamma(var_seq, shape = var_g$estimate[1],
-                        rate = var_g$estimate[2])
+                               rate = var_g$estimate[2])
     pdf_df$pdf_gamma <- var_pdf_g
   }
   if ("exponential" %in% distributions) {
@@ -118,7 +118,7 @@ multipdf_cont <- function(var, seq_length = 50, distributions = "all") {
 #' @export
 multicdf_cont <- function(var, seq_length = 50, distributions = "all") {
   # init global vars
-  var_seq <- dens <- NULL
+  var_seq <- NULL
   # get a sequence from the minimum to maximum of x with length
   #equal to seq_length + 1
   var_seq <- seq(min(var), max(var), length.out = seq_length + 1)
@@ -137,19 +137,19 @@ multicdf_cont <- function(var, seq_length = 50, distributions = "all") {
   if ("normal" %in% distributions) {
     var_n <- MASS::fitdistr(var, "normal")
     var_cdf_n <- stats::pnorm(var_seq, mean = var_n$estimate[1],
-                       sd = var_n$estimate[2])
+                              sd = var_n$estimate[2])
     cdf_df$cdf_normal <- var_cdf_n
   }
   if ("lognormal" %in% distributions) {
     var_ln <- MASS::fitdistr(var, "lognormal")
     var_cdf_ln <- stats::plnorm(var_seq, meanlog = var_ln$estimate[1],
-                         sdlog = var_ln$estimate[2])
+                                sdlog = var_ln$estimate[2])
     cdf_df$cdf_lognormal <- var_cdf_ln
   }
   if ("gamma" %in% distributions) {
     var_g <- MASS::fitdistr(var, "gamma")
     var_cdf_g <- stats::pgamma(var_seq, shape = var_g$estimate[1],
-                        rate = var_g$estimate[2])
+                               rate = var_g$estimate[2])
     cdf_df$cdf_gamma <- var_cdf_g
   }
   if ("exponential" %in% distributions) {
@@ -189,7 +189,7 @@ multiks_cont <- function(var, distributions = "all") {
   if ("normal" %in% distributions) {
     var_n <- MASS::fitdistr(var, "normal")
     var_ks_n <- stats::ks.test(var, "pnorm", mean = var_n$estimate[1],
-                        sd = var_n$estimate[2])
+                               sd = var_n$estimate[2])
     ks_n <- data.frame(matrix(ncol = 0, nrow = 1))
     ks_n$Distribution <- "Normal"
     ks_n$Distance <- if (!is.null(var_ks_n$statistic)) {
@@ -208,8 +208,8 @@ multiks_cont <- function(var, distributions = "all") {
   if ("lognormal" %in% distributions) {
     var_ln <- MASS::fitdistr(var, "lognormal")
     var_ks_ln <- stats::ks.test(var, "plnorm",
-                         meanlog = var_ln$estimate[1],
-                         sdlog = var_ln$estimate[2])[c(1, 2)]
+                                meanlog = var_ln$estimate[1],
+                                sdlog = var_ln$estimate[2])[c(1, 2)]
     ks_ln <- data.frame(matrix(ncol = 0, nrow = 1))
     ks_ln$Distribution <- "Lognormal"
     ks_ln$Distance <- if (!is.null(var_ks_ln$statistic)) {
@@ -228,8 +228,8 @@ multiks_cont <- function(var, distributions = "all") {
   if ("gamma" %in% distributions) {
     var_g <- MASS::fitdistr(var, "gamma")
     var_ks_g <- stats::ks.test(var, "pgamma",
-                        shape = var_g$estimate[1],
-                        rate = var_g$estimate[2])
+                               shape = var_g$estimate[1],
+                               rate = var_g$estimate[2])
     ks_g <- data.frame(matrix(ncol = 0, nrow = 1))
     ks_g$Distribution <- "Gamma"
     ks_g$Distance <- if (!is.null(var_ks_g$statistic)) {
@@ -585,7 +585,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     groups  <- sort(unique(data[[d_group]]))
     ngroups <- length(groups)
     ## get predictor range for each group
-    agg <- stats::aggregate(data[[d_pvar]] ~ data[[d_group]], data = data, range)
+    agg <- stats::aggregate(data[[d_pvar]] ~ data[[d_group]],
+                            data = data, range)
     dx_pvar <- data.frame(pvar = numeric(0))
     for (i in 1:ngroups) {
       tpvar <- data.frame(pvar = seq(agg[[2]][i, 1], agg[[2]][i, 2],
@@ -599,7 +600,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     if (interval == "confidence") {
       ### we don't need to explicitly declare that it's a confidence interval,
       ### the predict function defaults to it
-      pred <- stats::predict(mod, newdata = dx, se.fit = TRUE, type = "response")
+      pred <- stats::predict(mod, newdata = dx,
+                             se.fit = TRUE, type = "response")
       ### check for correction type
       if (correction == "exponential") {
         dx$mn <- exp(stats::qnorm(0.5,   pred$fit, pred$se.fit))
@@ -616,7 +618,7 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
       }
     } else { ### end confidence interval
       pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
-                      type = "response", interval = "prediction")
+                             type = "response", interval = "prediction")
       ### check for correction type
       if (correction == "exponential") {
         dx$mn <- exp(pred$fit[, "fit"])
@@ -675,7 +677,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     if (interval == "confidence") { ### confidence interval
       ### we don't need to explicitly declare that it's a confidence interval,
       ### the predict function defaults to it
-      pred <- stats::predict(mod, newdata = dx, se.fit = TRUE, type = "response")
+      pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
+                             type = "response")
       ### check for correction type
       if (correction == "exponential") {
         dx$mn <- exp(stats::qnorm(0.5,   pred$fit, pred$se.fit))
@@ -692,7 +695,7 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
       }
     } else { ### prediction interval
       pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
-                      type = "response", interval = "prediction")
+                             type = "response", interval = "prediction")
       ### check for correction type
       if (correction == "exponential") {
         dx$mn <- exp(pred$fit[, "fit"])
