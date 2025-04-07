@@ -11,12 +11,15 @@ pca_plot(group, pcavars, scaled = FALSE, palette = "oslo")
 
 \item{pcavars}{The variables to include in the principle component analysis}
 
-\item{scaled}{A boolean (TRUE or FALSE) indicating if the pcavars are already scaled}
+\item{scaled}{A boolean (TRUE or FALSE) indicating if the
+pcavars are already scaled}
 
-\item{palette}{A color palette to use on the plot, with each group assigned to a color.}
+\item{palette}{A color palette to use on the plot, with each
+group assigned to a color.}
 }
 \value{
-A plot showing PC1 on the x axis, PC2 on the y axis, colored by group, with vectors and labels showing the individual pca variables.
+A plot showing PC1 on the x axis, PC2 on the y axis, colored
+by group, with vectors and labels showing the individual pca variables.
 }
 \description{
 This function uses a group, PCA variables, and a "scaled" boolean to generate

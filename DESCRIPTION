@@ -1,6 +1,6 @@
 Package: ztils
 Title: ztils
-Version: 0.0.2.000
+Version: 0.0.3.000
 Authors@R: 
     person("Zach", "Peagler", , "zachpeagler00@gmail.com", role = c("aut", "cre"))
 Description: Utilities for easing the headache of common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, and predictions.
