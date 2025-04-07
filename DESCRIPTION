@@ -1,11 +1,15 @@
 Package: ztils
 Title: ztils
-Version: 0.0.1.0100
+Version: 0.0.2.000
 Authors@R: 
     person("Zach", "Peagler", , "zachpeagler00@gmail.com", role = c("aut", "cre"))
 Description: Utilities for easing the headache of common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, and predictions.
-License: use_mit_license()
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Imports: ggplot2, MASS, scico
+Imports: ggplot2, MASS, scico, vegan
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+URL: https://zachpeagler.github.io/ztils/

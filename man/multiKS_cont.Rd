@@ -18,5 +18,5 @@ KS test
 \description{
 This function gets the distance and p-value from a Kolmogorov-smirnov test for selected distributions
 against a continuous, non-negative input variable. Possible distributions include "normal",
-"lognormal", "gamma", "exponential", "logistic", and "all".
+"lognormal", "gamma", "exponential", and "all".
 }
