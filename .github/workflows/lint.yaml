@@ -27,7 +27,7 @@ jobs:
           needs: lint
 
       - name: Lint
-        run: lintr::lint_package(linters = lintr::linters_with_defaults(lintr::return_linter("explicit")))
+        run: lintr::lint_package(linters = lintr::linters_with_defaults(lintr::return_linter("explicit"), lintr::object_name_linter(styles=c("snake_case", "UPPERCASE"))))
         shell: Rscript {0}
         env:
           LINTR_ERROR_ON_LINT: true
