@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ztils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.100</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.210</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,9 +32,16 @@
       <small class="dont-index">Source: <a href="https://github.com/zachpeagler/ztils/blob/main/TODO.md" class="external-link"><code>TODO.md</code></a></small>
     </div>
 
-<ul class="task-list"><li><label><input type="checkbox" checked>implement proper testing with testthat</label></li>
+<ul class="task-list"><li>
+<label><input type="checkbox" checked>implement proper testing with testthat</label>
+<ul class="task-list"><li><label><input type="checkbox">add more tests (get to 100% code coverage)</label></li>
+</ul></li>
 <li><label><input type="checkbox">add vignettes</label></li>
 <li><label><input type="checkbox">improve function error codes to be more descriptive</label></li>
+<li>
+<label><input type="checkbox" checked>remake ‘predict_plot’ to lower cyclomatic complexity</label>
+<ul><li>this should be relatively easy by changing the group vs non-grouped behavior</li>
+</ul></li>
 </ul></main></div>
 
 

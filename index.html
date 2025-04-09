@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Common Statistical Utilities • ztils</title>
+<title>Various Common Statistical Utilities • ztils</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Common Statistical Utilities">
-<meta name="description" content="Utilities for simplifying common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, principal component plots, and prediction plots.">
-<meta property="og:description" content="Utilities for simplifying common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, principal component plots, and prediction plots.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Various Common Statistical Utilities">
+<meta name="description" content="Utilities for simplifying common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, principal component analysis plots, and prediction plots.">
+<meta property="og:description" content="Utilities for simplifying common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, principal component analysis plots, and prediction plots.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ztils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.100</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.210</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,9 +54,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>To install from CRAN (assuming it’s accepted) <code>{r} install.packages("ztils")</code></p>
-<p>To install the development version:</p>
-<p><code>{r} remotes::install_github("zachpeagler/ztils")</code></p>
+<p>To install from CRAN <code>{r} install.packages("ztils")</code> To install the development version: <code>{r} remotes::install_github("zachpeagler/ztils")</code></p>
 <p><br></p>
 </div>
 <div class="section level2">
@@ -121,7 +119,7 @@ no_extremes(iris, Sepal.Length)</code></pre>
 </div>
 </div>
 <div class="section level2">
-<h2 id="multipdf_cont">multiPDF_cont()<a class="anchor" aria-label="anchor" href="#multipdf_cont"></a>
+<h2 id="multipdf_cont">multipdf_cont()<a class="anchor" aria-label="anchor" href="#multipdf_cont"></a>
 </h2>
 <div class="section level3">
 <h3 id="description-2">Description<a class="anchor" aria-label="anchor" href="#description-2"></a>
@@ -134,7 +132,7 @@ no_extremes(iris, Sepal.Length)</code></pre>
 <div class="section level3">
 <h3 id="usage-2">Usage:<a class="anchor" aria-label="anchor" href="#usage-2"></a>
 </h3>
-<p><code>{r} multiPDF_cont(var,                seq_length = 50,                distributions = "all"               )</code></p>
+<p><code>{r} multipdf_cont(var,                seq_length = 50,                distributions = "all"               )</code></p>
 </div>
 <div class="section level3">
 <h3 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a>
@@ -168,19 +166,19 @@ no_extremes(iris, Sepal.Length)</code></pre>
 <div class="section level3">
 <h3 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h3>
-<p>``` {r} multiPDF_cont(iris$Petal.Length)</p>
-<p>multiPDF_cont(iris$Sepal.Length, 100, c(“normal”, “lognormal”))</p>
+<p>``` {r} multipdf_cont(iris$Petal.Length)</p>
+<p>multipdf_cont(iris$Sepal.Length, 100, c(“normal”, “lognormal”))</p>
 <pre><code>
 
 
-## multiPDF_plot()
+## multipdf_plot()
 
 ### Description
 This function extends **multiPDF_cont** and gets the probability density functions (PDFs) for selected distributions against **continuous**, **non-negative** numbers. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions). It then plots this using **ggplot2** and a **scico** palette, using **var_name** for the plot labeling, if specified. If not specified, it will use **var** instead.
 
 ### Usage
 ```{r}
-multiPDF_plot(var,
+multipdf_plot(var,
               seq_length = 50,
               distributions = "all",
               palette = "oslo",
@@ -212,12 +210,12 @@ multiPDF_plot(var,
 <h3 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a>
 </h3>
 <p>```{r}</p>
-<p>multiPDF_plot(iris$Sepal.Length)</p>
-<p>multiPDF_plot(iris$Sepal.Length, length = 100, distributions = c(“normal”, “lognormal”, “gamma”), palette = “bilbao”, var_name = “Sepal Length (cm)” )</p>
+<p>multipdf_plot(iris$Sepal.Length)</p>
+<p>multipdf_plot(iris$Sepal.Length, seq_length = 100, distributions = c(“normal”, “lognormal”, “gamma”), palette = “bilbao”, var_name = “Sepal Length (cm)” )</p>
 <pre><code>
 &lt;br&gt;
 
-### multiCDF_cont()
+### multicdf_cont()
 
 ### Description
 This function gets the cumulative distribution function (CDF) for selected distributions against **continuous** variables. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions).
@@ -226,7 +224,7 @@ This function gets the cumulative distribution function (CDF) for selected distr
 
 ### Usage:
 ```{r}
-multiCDF_cont(var,
+multicdf_cont(var,
               seq_length = 50,
               distributions = "all"
               )</code></pre>
@@ -263,19 +261,19 @@ multiCDF_cont(var,
 <div class="section level3">
 <h3 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a>
 </h3>
-<p>``` {r} multiCDF_cont(iris$Petal.Length)</p>
-<p>multiCDF_cont(iris$Sepal.Length, 100, c(“normal”, “lognormal”) )</p>
+<p>``` {r} multicdf_cont(iris$Petal.Length)</p>
+<p>multicdf_cont(iris$Sepal.Length, 100, c(“normal”, “lognormal”) )</p>
 <pre><code>
 
 
-## multiCDF_plot()
+## multicdf_plot()
 
 ### Description
 This function extends **multiCDF_cont** and gets the cumulative distribution functions (CDFs) for selected distributions against **continuous**, **non-negative** numbers. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions). It then plots this using **ggplot2** and a **scico** palette, using **var_name** for the plot labeling, if specified. If not specified, it will use **var** instead.
 
 ### Usage
 ```{r}
-multiCDF_plot(var,
+multicdf_plot(var,
               seq_length = 50,
               distributions = "all",
               palette = "oslo",
@@ -307,19 +305,19 @@ multiCDF_plot(var,
 <h3 id="examples-3">Examples<a class="anchor" aria-label="anchor" href="#examples-3"></a>
 </h3>
 <p>```{r}</p>
-<p>multiCDF_plot(iris$Sepal.Length)</p>
-<p>multiCDF_plot(iris$Sepal.Length, length = 100, distributions = c(“normal”, “lognormal”, “gamma”), palette = “bilbao”, var_name = “Sepal Length (cm)” )</p>
+<p>multicdf_plot(iris$Sepal.Length)</p>
+<p>multicdf_plot(iris$Sepal.Length, seq_length = 100, distributions = c(“normal”, “lognormal”, “gamma”), palette = “bilbao”, var_name = “Sepal Length (cm)” )</p>
 <pre><code>
 &lt;br&gt;
 
-## multiKS_cont()
+## multiks_cont()
 
 ### Description
 This function gets the distance and p-value from a one-sample Kolmogorov-Smirnov (KS) test for selected distributions against a continous input variable. Possible distributions include "normal", "lognormal", "gamma", "exponential", and "all".
 
 ### Usage
 ```{r}
-multiKS_cont(var,
+multiks_cont(var,
              distributions = "all"
              )</code></pre>
 <blockquote>
@@ -344,28 +342,55 @@ multiKS_cont(var,
 <div class="section level3">
 <h3 id="examples-4">Examples<a class="anchor" aria-label="anchor" href="#examples-4"></a>
 </h3>
-<p>```{r} multiKS_cont(iris$Sepal.Length)</p>
-<p>multiKS_cont(iris$Sepal.Length, c(“normal”, “lognormal”))</p>
+<p>```{r} multiks_cont(iris$Sepal.Length)</p>
+<p>multiks_cont(iris$Sepal.Length, c(“normal”, “lognormal”))</p>
 <pre><code>
 &lt;br&gt;
 
-
-
-## pca_plot()
+## gml_pseudor2
 
 ### Description
-This function performs a principal component analysis (PCA) for the selected **pcavars** with the option to automatically scale the variables. It then graphs PC1 on the x axis and PC2 on the y-axis using *ggplot2*, coloring the graph with a *scico* palette over the specified **groups**. This is similar to the *biplot* command from the *stats* package, but performs all the steps required in graphing a PCA for you.
+This function calculates the pseudo R^2 (proportion of variance explained by the model) for a general linear model (glm).  glms don't have real R^2 due to the intrinsic difference between a linear model and a generalized linear model, but we can still calculate an approximiation of the R^2 as (1 - (deviance/null deviance)).
 
 ### Usage
 ```{r}
-pca_plot(group,
-         pcavars,
-         scaled = FALSE,
-         palette = "oslo
-         )</code></pre>
+glm_pseudor2(mod)</code></pre>
 </div>
 <div class="section level3">
 <h3 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a>
+</h3>
+<ul>
+<li>
+<strong>mod</strong>: The glm object to calculate a pseudo-R^2 for.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a>
+</h3>
+<p>Returns the pseudo R^2 value of the model.</p>
+</div>
+<div class="section level3">
+<h3 id="examples-5">Examples<a class="anchor" aria-label="anchor" href="#examples-5"></a>
+</h3>
+<p><code>{r} gmod &lt;- glm(Sepal.Length ~ Petal.Length + Species, data = iris) glm_pseudor2(gmod)</code></p>
+<p><br></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="pca_plot">pca_plot()<a class="anchor" aria-label="anchor" href="#pca_plot"></a>
+</h2>
+<div class="section level3">
+<h3 id="description-3">Description<a class="anchor" aria-label="anchor" href="#description-3"></a>
+</h3>
+<p>This function performs a principal component analysis (PCA) for the selected <strong>pcavars</strong> with the option to automatically scale the variables. It then graphs PC1 on the x axis and PC2 on the y-axis using <em>ggplot2</em>, coloring the graph with a <em>scico</em> palette over the specified <strong>groups</strong>. This is similar to the <em>biplot</em> command from the <em>stats</em> package, but performs all the steps required in graphing a PCA for you.</p>
+</div>
+<div class="section level3">
+<h3 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a>
+</h3>
+<p><code>{r} pca_plot(group,          pcavars,          scaled = FALSE,          palette = "oslo          )</code></p>
+</div>
+<div class="section level3">
+<h3 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a>
 </h3>
 <ul>
 <li>
@@ -379,12 +404,12 @@ pca_plot(group,
 </ul>
 </div>
 <div class="section level3">
-<h3 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a>
+<h3 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a>
 </h3>
 <p>A ggplot object showing PC1 on the x axis and PC2 on the y axis, colored by group with vectors and labels showing the individual pca variables.</p>
 </div>
 <div class="section level3">
-<h3 id="examples-5">Examples<a class="anchor" aria-label="anchor" href="#examples-5"></a>
+<h3 id="examples-6">Examples<a class="anchor" aria-label="anchor" href="#examples-6"></a>
 </h3>
 <p>```{r} pca_plot(iris$Species, iris[,c(1:4)])</p>
 <p>pca_plot(iris$Species, iris[,c(1:4)], FALSE, “bilbao”)</p>
@@ -405,7 +430,7 @@ pca_data(data,
          )</code></pre>
 </div>
 <div class="section level3">
-<h3 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a>
+<h3 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a>
 </h3>
 <ul>
 <li>
@@ -417,12 +442,12 @@ pca_data(data,
 </ul>
 </div>
 <div class="section level3">
-<h3 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a>
+<h3 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a>
 </h3>
 <p>Returns a dataframe with principal components as additional columns.</p>
 </div>
 <div class="section level3">
-<h3 id="examples-6">Examples<a class="anchor" aria-label="anchor" href="#examples-6"></a>
+<h3 id="examples-7">Examples<a class="anchor" aria-label="anchor" href="#examples-7"></a>
 </h3>
 <p><code>{r} pca_data(iris, iris[,c(1:4)], FALSE)</code></p>
 <p><br></p>
@@ -432,7 +457,7 @@ pca_data(data,
 <h2 id="predict_plot">predict_plot()<a class="anchor" aria-label="anchor" href="#predict_plot"></a>
 </h2>
 <div class="section level3">
-<h3 id="description-3">Description<a class="anchor" aria-label="anchor" href="#description-3"></a>
+<h3 id="description-4">Description<a class="anchor" aria-label="anchor" href="#description-4"></a>
 </h3>
 <p>This function performs a prediction based on the supplied <strong>model</strong>, then graphs it using <em>ggplot2</em>. Options are available for predicting based on the confidence or prediction interval, as well as for applying corrections, such as exponential and logistic.</p>
 <blockquote>
@@ -460,7 +485,6 @@ Returns a plot with the observed (real) data plotted as points and the predictio
 ### Examples
 ```{r}
 mod1 &lt;- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
-
 predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)</code></pre>
 <p><br></p>
 </div>
@@ -499,7 +523,7 @@ predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)</code></pre>
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Zach Peagler <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Zach Peagler <br><small class="roles"> Author, maintainer, copyright holder </small>  </li>
 </ul>
 </div>
 
