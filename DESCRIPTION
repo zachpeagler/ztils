@@ -7,20 +7,19 @@ Authors@R:
 Description: Utilities for simplifying common statistical operations including
  probability density functions, cumulative distribution functions, 
  Kolmogorov-Smirnov tests, principal component analysis plots, and prediction plots.
-License: GPL-2
+License: MIT + file LICENSE
+URL: https://zachpeagler.github.io/ztils, https://github.com/zachpeagler/ztils
+BugReports: https://github.com/zachpeagler/ztils/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Requires:
-    R ( >= 3.3.0),
-    methods
+Depends:
+    R (>= 3.3.0)
 Imports: 
     ggplot2, 
     MASS, 
     scico, 
     vegan
 Suggests: 
-    testthat ( >= 3.0.0)
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://zachpeagler.github.io/ztils/
-BugReports: https://github.com/zachpeagler/ztils/issues

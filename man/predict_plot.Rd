@@ -49,19 +49,15 @@ A plot showing the real data and the model's predicted 95\% CI or PI
 over a number of groups, with optional corrections.
 }
 \description{
-This function uses a model, dataframe, and supplied predictor,response,
-and group variables to make predictions
-based off the model over a user-defined length with options to predict
-over the confidence or prediction
-interval and to apply a mathematical correction.
-You can also choose the color palette.
+This function uses a model, dataframe, and supplied predictor, response,
+and group variables to make predictions based off the model over a
+user-defined length with options to predict over the confidence or
+prediction interval and to apply a mathematical correction. It then
+graphs both the real data and the specified interval using 'ggplot2'.
+You can also choose the color palette from 'scico' palettes.
 }
-\details{
-This function natively uses ggplot2 to graph the plot.
-This is because ggplot2 is beautiful and easy,
-and I hate making ugly (sorry) base R graphs.
-
-This function natively uses the scico package color palettes.
-I highly recommend scico for easy to use,
-colorblind-accessible palettes.
+\examples{
+## Example 1
+mod1 <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
+predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)
 }

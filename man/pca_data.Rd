@@ -20,6 +20,9 @@ colored by group, with vectors and labels showing the
 individual pca variables.
 }
 \description{
-This function uses a dataframe, PCA variables, and a "scaled" boolean to
+This function uses a dataframe, PCA variables, and a scaled boolean to
 generate a dataframe with principal components as columns.
+}
+\examples{
+pca_data(iris, iris[,c(1:4)], FALSE)
 }

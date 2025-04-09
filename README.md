@@ -86,7 +86,7 @@ no_extremes(iris, Sepal.Length)
 <br>
 
 
-## multiPDF_cont()
+## multipdf_cont()
 
 ### Description
 This function gets the probability density function (PDF) for selected distributions against **continuous** variables. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions).
@@ -95,7 +95,7 @@ This function gets the probability density function (PDF) for selected distribut
 
 ### Usage:
 ```{r}
-multiPDF_cont(var, 
+multipdf_cont(var, 
               seq_length = 50, 
               distributions = "all"
               )
@@ -114,21 +114,21 @@ This function returns a dataframe with row number equal to **seq_length** contai
 
 ### Examples
 ``` {r}
-multiPDF_cont(iris$Petal.Length)
+multipdf_cont(iris$Petal.Length)
 
-multiPDF_cont(iris$Sepal.Length, 100, c("normal", "lognormal"))
+multipdf_cont(iris$Sepal.Length, 100, c("normal", "lognormal"))
 ```
 
 
 
-## multiPDF_plot()
+## multipdf_plot()
 
 ### Description
 This function extends **multiPDF_cont** and gets the probability density functions (PDFs) for selected distributions against **continuous**, **non-negative** numbers. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions). It then plots this using **ggplot2** and a **scico** palette, using **var_name** for the plot labeling, if specified. If not specified, it will use **var** instead.
 
 ### Usage
 ```{r}
-multiPDF_plot(var, 
+multipdf_plot(var, 
               seq_length = 50,
               distributions = "all", 
               palette = "oslo", 
@@ -149,10 +149,10 @@ A plot showing the PDF of the selected variable against the selected distributio
 ### Examples
 ```{r}
 
-multiPDF_plot(iris$Sepal.Length)
+multipdf_plot(iris$Sepal.Length)
 
-multiPDF_plot(iris$Sepal.Length,
-              length = 100,
+multipdf_plot(iris$Sepal.Length,
+              seq_length = 100,
               distributions = c("normal", "lognormal", "gamma"),
               palette = "bilbao",
               var_name = "Sepal Length (cm)"
@@ -162,7 +162,7 @@ multiPDF_plot(iris$Sepal.Length,
 
 <br>
 
-### multiCDF_cont()
+### multicdf_cont()
 
 ### Description
 This function gets the cumulative distribution function (CDF) for selected distributions against **continuous** variables. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions).
@@ -171,7 +171,7 @@ This function gets the cumulative distribution function (CDF) for selected distr
 
 ### Usage:
 ```{r}
-multiCDF_cont(var, 
+multicdf_cont(var, 
               seq_length = 50, 
               distributions = "all"
               )
@@ -190,9 +190,9 @@ This function returns a dataframe with row number equal to **seq_length** contai
 
 ### Examples
 ``` {r}
-multiCDF_cont(iris$Petal.Length)
+multicdf_cont(iris$Petal.Length)
 
-multiCDF_cont(iris$Sepal.Length,
+multicdf_cont(iris$Sepal.Length,
               100, 
               c("normal", "lognormal")
               )
@@ -200,14 +200,14 @@ multiCDF_cont(iris$Sepal.Length,
 
 
 
-## multiCDF_plot()
+## multicdf_plot()
 
 ### Description
 This function extends **multiCDF_cont** and gets the cumulative distribution functions (CDFs) for selected distributions against **continuous**, **non-negative** numbers. Possible distributions include any combination of "normal", "lognormal", "gamma", "exponential", and "all" (which just uses all of the prior distributions). It then plots this using **ggplot2** and a **scico** palette, using **var_name** for the plot labeling, if specified. If not specified, it will use **var** instead.
 
 ### Usage
 ```{r}
-multiCDF_plot(var, 
+multicdf_plot(var, 
               seq_length = 50,
               distributions = "all", 
               palette = "oslo", 
@@ -228,10 +228,10 @@ A plot showing the CDF of the selected variable against the selected distributio
 ### Examples
 ```{r}
 
-multiCDF_plot(iris$Sepal.Length)
+multicdf_plot(iris$Sepal.Length)
 
-multiCDF_plot(iris$Sepal.Length,
-              length = 100,
+multicdf_plot(iris$Sepal.Length,
+              seq_length = 100,
               distributions = c("normal", "lognormal", "gamma"),
               palette = "bilbao",
               var_name = "Sepal Length (cm)"
@@ -240,14 +240,14 @@ multiCDF_plot(iris$Sepal.Length,
 
 <br>
 
-## multiKS_cont()
+## multiks_cont()
 
 ### Description
 This function gets the distance and p-value from a one-sample Kolmogorov-Smirnov (KS) test for selected distributions against a continous input variable. Possible distributions include "normal", "lognormal", "gamma", "exponential", and "all".
 
 ### Usage
 ```{r}
-multiKS_cont(var,
+multiks_cont(var,
              distributions = "all"   
              )
 ```
@@ -262,13 +262,36 @@ Returns a dataframe with the distance and p-value for each performed KS test. Th
 
 ### Examples
 ```{r}
-multiKS_cont(iris$Sepal.Length)
+multiks_cont(iris$Sepal.Length)
 
-multiKS_cont(iris$Sepal.Length, c("normal", "lognormal"))
+multiks_cont(iris$Sepal.Length, c("normal", "lognormal"))
 ```
 
 <br>
 
+## gml_pseudor2
+
+### Description
+This function calculates the pseudo R^2 (proportion of variance explained by the model) for a general linear model (glm).  glms don't have real R^2 due to the intrinsic difference between a linear model and a generalized linear model, but we can still calculate an approximiation of the R^2 as (1 - (deviance/null deviance)).
+
+### Usage
+```{r}
+glm_pseudor2(mod)
+```
+
+### Arguments
+- **mod**: The glm object to calculate a pseudo-R^2 for.
+
+### Returns
+Returns the pseudo R^2 value of the model.
+
+### Examples
+```{r}
+gmod <- glm(Sepal.Length ~ Petal.Length + Species, data = iris)
+glm_pseudor2(gmod)
+```
+
+<br>
 
 
 ## pca_plot()
@@ -374,7 +397,6 @@ Returns a plot with the observed (real) data plotted as points and the predictio
 ### Examples
 ```{r}
 mod1 <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
-
 predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)
 ```
 

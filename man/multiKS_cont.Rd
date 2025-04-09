@@ -21,3 +21,8 @@ test for selected distributions against a continuous input variable.
 Possible distributions include "normal",
 "lognormal", "gamma", "exponential", and "all".
 }
+\examples{
+multiks_cont(iris$Sepal.Length)
+
+multiks_cont(iris$Sepal.Length, c("normal", "lognormal"))
+}

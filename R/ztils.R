@@ -1,14 +1,15 @@
 #' No outliers
-#'
+#' @description
 #' This function returns a dataframe subsetted to not include observations that
 #' are beyond the outliers of the specified variable.
-#'
 #' Outliers are defined by the quantiles +- 1.5 times the interquartile range.
 #'
 #' @param data The data to subset
 #' @param var The variable to subset by
 #' @returns A dataframe without entries containing outliers in
 #'  the selected variable.
+#' @examples
+#' no_outliers(iris, Sepal.Length)
 #' @export
 no_outliers <- function(data, var) {
   # deparse variable
@@ -24,16 +25,18 @@ no_outliers <- function(data, var) {
 }
 
 #' No extremes
-#'
+#' @description
 #' This function returns a dataframe subsetted to not include observations that
 #' are beyond the extremes of the specified variable.
-#'
 #' Extremes are defined by the quantiles +- 3 times the interquartile range.
 #'
 #' @param data The data to subset
 #' @param var The variable to subset by.
 #' @returns A dataframe without entries containing extremes in
 #'  the selected variable.
+#' @examples
+#' no_extremes(iris, Sepal.Length)
+#'
 #' @export
 no_extremes <- function(data, var) {
   # deparse variable
@@ -49,7 +52,7 @@ no_extremes <- function(data, var) {
 }
 
 #' Multiple Proportional Density Functions for Continuous Variables
-#'
+#' @description
 #' This function gets the proportional density functions for selected
 #' distributions against continuous, non-negative numbers.
 #' Possible distributions include "normal",
@@ -60,6 +63,10 @@ no_extremes <- function(data, var) {
 #' @param distributions The distributions to fit x against
 #' @returns A dataframe with x, the real density, and the pdf of the desired
 #'  distributions with length (nrows) equal to seq_length +1.
+#' @examples
+#' multipdf_cont(iris$Petal.Length)
+#'
+#' multipdf_cont(iris$Sepal.Length, 100, c("normal", "lognormal"))
 #' @export
 multipdf_cont <- function(var, seq_length = 50, distributions = "all") {
   # get a sequence from the minimum to maximum of x with length
@@ -103,7 +110,7 @@ multipdf_cont <- function(var, seq_length = 50, distributions = "all") {
 }
 
 #' Multiple Cumulative Distribution Functions for Continuous Variables
-#'
+#' @description
 #' This function gets the cumulative distribution function for
 #' selected distributions against a continuous, non-negative input variable.
 #' Possible distributions include "normal",
@@ -115,6 +122,13 @@ multipdf_cont <- function(var, seq_length = 50, distributions = "all") {
 #' @param distributions The distributions to fit x against
 #' @returns A dataframe with x, the real density, and the pdf of the desired
 #'  distributions with length (nrows) equal to seq_length +1.
+#' @examples
+#' multicdf_cont(iris$Petal.Length)
+#'
+#' multicdf_cont(iris$Sepal.Length,
+#'               100,
+#'               c("normal", "lognormal")
+#'               )
 #' @export
 multicdf_cont <- function(var, seq_length = 50, distributions = "all") {
   # init global vars
@@ -162,7 +176,7 @@ multicdf_cont <- function(var, seq_length = 50, distributions = "all") {
 }
 
 #' Multiple Kolmogorov-Smirnov Tests for Continuous Variables
-#'
+#' @description
 #' This function gets the distance and p-value from a Kolmogorov-smirnov
 #' test for selected distributions against a continuous input variable.
 #' Possible distributions include "normal",
@@ -172,6 +186,10 @@ multicdf_cont <- function(var, seq_length = 50, distributions = "all") {
 #' @param distributions The distributions to test x against
 #' @returns A dataframe with the distance and p value for each performed
 #' ks test
+#' @examples
+#' multiks_cont(iris$Sepal.Length)
+#'
+#' multiks_cont(iris$Sepal.Length, c("normal", "lognormal"))
 #' @export
 multiks_cont <- function(var, distributions = "all") {
   # check if "all" was passed to distributions
@@ -273,24 +291,30 @@ multiks_cont <- function(var, distributions = "all") {
   return(ks_df)
 }
 
-#'glm_pseudoR2
+#' glm_pseudoR2
+#' @description
+#' A function for calculating the pseudo R^2 of a glm object
 #'
-#'A function for calculating the pseudo R^2 for a glm
-#'
-#'@param mod The model for which to calculate the pseudo R^2
-#'@returns The pseudo R^2 value of the model
-#'@export
+#' @param mod The model for which to calculate the pseudo R^2
+#' @returns The pseudo R^2 value of the model
+#' @examples
+#' gmod <- glm(Sepal.Length ~ Petal.Length + Species, data = iris)
+#' glm_pseudor2(gmod)
+#' @export
 glm_pseudor2 <- function(mod) {
   pr2 <- 1 - (mod$deviance / mod$null.deviance)
   return(pr2)
 }
 
 #' multipdf_plot
-#'
-#' This function is a version of MultiPDF_plot from my MultiFitR package
-#' that is customized to use formatting that I like. However, this formatting
-#' uses several packages that I didn't want to include in the
-#' base MultiFitR or MultiFitRgg packages.
+#' @description
+#' This function extends 'multiPDF_cont' and gets the probability density
+#' functions (PDFs) for selected distributions against continuous variables.
+#' Possible distributions include any combination of "normal", "lognormal",
+#' "gamma", "exponential", and "all" (which just uses all of the prior
+#' distributions). It then plots this using 'ggplot2' and a 'scico' palette,
+#' using var_name for the plot labeling, if specified. If not specified,
+#' it will use var instead.
 #'
 #' @param var The variable to for which to plot PDFs
 #' @param seq_length The number of points over which to fit x
@@ -300,6 +324,15 @@ glm_pseudor2 <- function(mod) {
 #' the function will grab the column name provided in x
 #' @returns A plot showing the PDF of the selected variable against the
 #' selected distributions over the selected sequence length
+#' @examples
+#' multipdf_plot(iris$Sepal.Length)
+#'
+#' multipdf_plot(iris$Sepal.Length,
+#'               seq_length = 100,
+#'               distributions = c("normal", "lognormal", "gamma"),
+#'               palette = "bilbao",
+#'               var_name = "Sepal Length (cm)"
+#'               )
 #' @export
 multipdf_plot <- function(var, seq_length = 50, distributions = "all",
                           palette = "oslo", var_name = NULL) {
@@ -367,11 +400,14 @@ multipdf_plot <- function(var, seq_length = 50, distributions = "all",
 }
 
 #' multicdf_plot
-#'
-#' This function is a version of multicdf_plot from my MultiFitR package
-#' that is customized to use formatting that I like. However, this formatting
-#'  uses several packages that I didn't want to include in the
-#' base MultiFitR or MultiFitRgg packages. (scico)
+#' @description
+#' This function extends 'multiCDF_cont' and gets the cumulative distribution
+#' functions (CDFs) for selected distributions against a continuous variable.
+#' Possible distributions include any combination of "normal", "lognormal",
+#' "gamma", "exponential", and "all" (which just uses all of the prior
+#' distributions). It then plots this using 'ggplot2' and a 'scico' palette,
+#' using var_name for the plot labeling, if specified. If not specified,
+#' it will use var instead.
 #'
 #' @param var The variable to for which to plot CDFs
 #' @param seq_length The number of points over which to fit x
@@ -380,6 +416,15 @@ multipdf_plot <- function(var, seq_length = 50, distributions = "all",
 #' @param var_name The variable name to use for x
 #' @returns A plot showing the CDF of the selected variable against the
 #' selected distributions over the selected sequence length
+#' @examples
+#' multicdf_plot(iris$Sepal.Length)
+#'
+#' multicdf_plot(iris$Sepal.Length,
+#'               seq_length = 100,
+#'               distributions = c("normal", "lognormal", "gamma"),
+#'               palette = "bilbao",
+#'               var_name = "Sepal Length (cm)"
+#'               )
 #' @export
 multicdf_plot <- function(var, seq_length = 50, distributions = "all",
                           palette = "oslo", var_name = NULL) {
@@ -447,9 +492,10 @@ multicdf_plot <- function(var, seq_length = 50, distributions = "all",
 }
 
 #' Principal Component Analysis Plot
+#' @description
+#' This function uses a group, PCA variables, and a scaled boolean to
+#' generate a biplot.using 'ggplot2' and 'scico'.
 #'
-#' This function uses a group, PCA variables, and a "scaled" boolean to generate
-#' a biplot.using ggplot2
 #' @param group The group variable (column)
 #' @param pcavars The variables to include in the principle component analysis
 #' @param scaled A boolean (TRUE or FALSE) indicating if the
@@ -458,10 +504,14 @@ multicdf_plot <- function(var, seq_length = 50, distributions = "all",
 #'  group assigned to a color.
 #' @returns A plot showing PC1 on the x axis, PC2 on the y axis, colored
 #'  by group, with vectors and labels showing the individual pca variables.
+#' @examples
+#' pca_plot(iris$Species, iris[,c(1:4)])
+#'
+#' pca_plot(iris$Species, iris[,c(1:4)], FALSE, "bilbao")
 #' @export
 pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
   # init global variables
-  pc1 <- pc2 <- NULL
+  PC1 <- PC2 <- NULL
   # prepare groups
   gr <- sort(unique(group))
   groups <- gr[match(group, gr)]
@@ -482,19 +532,19 @@ pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
   vx <- vegan::scores(p1)$species
   # plot
   p <- ggplot2::ggplot() +
-    ggplot2::geom_point(data = px, ggplot2::aes(x = pc1, y = pc2,
-                                                color = groups, fill = groups),
+    ggplot2::geom_point(data = px, ggplot2::aes(x = PC1, y = PC2,
+                                                color = groups),
                         size = 3) +
     ggplot2::geom_segment(data = vx,
                           ggplot2::aes(x = 0, y = 0,
-                                       xend = pc1 * .25, yend = pc2 * .25),
+                                       xend = PC1 * .25, yend = PC2 * .25),
                           color = "black") +
     ggplot2::annotate("text", x = vx[, 1] * .27, y = vx[, 2] * .27,
                       label = rownames(vx)) +
     ggplot2::xlab(paste0("PC1 (", pc1val, "%)")) +
     ggplot2::ylab(paste0("PC2 (", pc2val, "%)")) +
     scico::scale_color_scico_d(begin = 0.9, end = 0.1, palette = palette) +
-    scico::scale_fill_scico_d(begin = 0.9, end = 0.1, palette = palette) +
+    ggplot2::guides(color = ggplot2::guide_legend(title = "Groups")) +
     ggplot2::theme_bw() +
     ggplot2::theme(
       text = ggplot2::element_text(size = 10),
@@ -505,9 +555,10 @@ pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
 }
 
 #' Principal Component Analysis Data
-#'
-#' This function uses a dataframe, PCA variables, and a "scaled" boolean to
+#' @description
+#' This function uses a dataframe, PCA variables, and a scaled boolean to
 #'  generate a dataframe with principal components as columns.
+#'
 #' @param data The dataframe to add principal components to.
 #' @param pcavars The variables to include in the principle component analysis
 #' @param scaled A boolean (TRUE or FALSE) indicating if the
@@ -515,6 +566,8 @@ pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
 #' @returns A plot showing PC1 on the x axis, PC2 on the y axis,
 #'  colored by group, with vectors and labels showing the
 #'  individual pca variables.
+#' @examples
+#' pca_data(iris, iris[,c(1:4)], FALSE)
 #' @export
 pca_data <- function(data, pcavars, scaled = FALSE) {
   scaled <- as.logical(scaled)
@@ -529,12 +582,12 @@ pca_data <- function(data, pcavars, scaled = FALSE) {
 }
 
 #' Prediction Plot
-#'
+#' @description
 #' This function uses a model, dataframe, and supplied predictor, response,
 #' and group variables to make predictions based off the model over a
 #' user-defined length with options to predict over the confidence or
 #' prediction interval and to apply a mathematical correction. It then
-#' graphs both the real data and the 95% CI (or PI) using ggplot2.
+#' graphs both the real data and the specified interval using 'ggplot2'.
 #' You can also choose the color palette from 'scico' palettes.
 #'
 #' @param mod the model used for predictions
@@ -566,15 +619,15 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
                          length = 50, interval = "confidence",
                          correction = "normal", palette = "oslo") {
   # init global vars
-  .data <- NULL
-  lo <- mn <- up <- NULL
-  if (!is.null(data[[deparse(substitute(group))]])) { ## grouped prediciton plot
-    ### deparse variables
-    d_pvar <- deparse(substitute(pvar))
-    d_rvar <- deparse(substitute(rvar))
+  .data <- grouped <- lo <- mn <- up <- NULL
+  ## deparse variables
+  d_pvar <- deparse(substitute(pvar))
+  d_rvar <- deparse(substitute(rvar))
+  ## get explicit names  of deparsed variables
+  pvar_name <- colnames(data[d_pvar])
+  if (!is.null(data[[deparse(substitute(group))]])) { # group setup
+    grouped <- TRUE
     d_group  <- deparse(substitute(group))
-    ### get explicit names  of deparsed variables
-    pvar_name <- colnames(data[d_pvar])
     group_name  <- colnames(data[d_group])
     ## get group data ready
     groups  <- sort(unique(data[[d_group]]))
@@ -591,43 +644,51 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     dx <- data.frame(group = rep(agg[[1]], each = length),
                      pvar = dx_pvar)
     colnames(dx) <- c(group_name, pvar_name)
-    ## make prediction
-    if (interval == "confidence") {
-      pred <- stats::predict(mod, newdata = dx,
-                             se.fit = TRUE, type = "response")
-      ### check for correction type
-      if (correction == "exponential") {
-        dx$mn <- exp(stats::qnorm(0.5,   pred$fit, pred$se.fit))
-        dx$lo <- exp(stats::qnorm(0.025, pred$fit, pred$se.fit))
-        dx$up <- exp(stats::qnorm(0.975, pred$fit, pred$se.fit))
-      } else if (correction == "logit") {
-        dx$mn <- stats::plogis(stats::qnorm(0.5,   pred$fit, pred$se.fit))
-        dx$lo <- stats::plogis(stats::qnorm(0.025, pred$fit, pred$se.fit))
-        dx$up <- stats::plogis(stats::qnorm(0.975, pred$fit, pred$se.fit))
-      } else {
-        dx$mn <- stats::qnorm(0.5,   pred$fit, pred$se.fit)
-        dx$lo <- stats::qnorm(0.025, pred$fit, pred$se.fit)
-        dx$up <- stats::qnorm(0.975, pred$fit, pred$se.fit)
-      }
-    } else { ### end confidence interval
-      pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
-                             type = "response", interval = "prediction")
-      ### check for correction type
-      if (correction == "exponential") {
-        dx$mn <- exp(pred$fit[, "fit"])
-        dx$lo <- exp(pred$fit[, "lwr"])
-        dx$up <- exp(pred$fit[, "upr"])
-      } else if (correction == "logit") {
-        dx$mn <- stats::plogis(pred$fit[, "fit"])
-        dx$lo <- stats::plogis(pred$fit[, "lwr"])
-        dx$up <- stats::plogis(pred$fit[, "upr"])
-      } else {
-        dx$mn <- pred$fit[, "fit"]
-        dx$lo <- pred$fit[, "lwr"]
-        dx$up <- pred$fit[, "upr"]
-      }
-    } ### end prediction interval
-    ## initialize plot with real data
+  } else { # non group setup
+    grouped <- FALSE
+    dx_pvar <- seq(min(data[[d_pvar]]), max(data[[d_pvar]]),
+                   length.out = length)
+    dx <- data.frame(pvar = dx_pvar)
+    colnames(dx) <- pvar_name
+  }
+  ## make prediction
+  if (interval == "confidence") {
+    pred <- stats::predict(mod, newdata = dx,
+                           se.fit = TRUE, type = "response")
+    ### check for correction type
+    if (correction == "exponential") {
+      dx$mn <- exp(stats::qnorm(0.5,   pred$fit, pred$se.fit))
+      dx$lo <- exp(stats::qnorm(0.025, pred$fit, pred$se.fit))
+      dx$up <- exp(stats::qnorm(0.975, pred$fit, pred$se.fit))
+    } else if (correction == "logit") {
+      dx$mn <- stats::plogis(stats::qnorm(0.5,   pred$fit, pred$se.fit))
+      dx$lo <- stats::plogis(stats::qnorm(0.025, pred$fit, pred$se.fit))
+      dx$up <- stats::plogis(stats::qnorm(0.975, pred$fit, pred$se.fit))
+    } else {
+      dx$mn <- stats::qnorm(0.5,   pred$fit, pred$se.fit)
+      dx$lo <- stats::qnorm(0.025, pred$fit, pred$se.fit)
+      dx$up <- stats::qnorm(0.975, pred$fit, pred$se.fit)
+    }
+  } else { ### end confidence interval
+    pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
+                           type = "response", interval = "prediction")
+    ### check for correction type
+    if (correction == "exponential") {
+      dx$mn <- exp(pred$fit[, "fit"])
+      dx$lo <- exp(pred$fit[, "lwr"])
+      dx$up <- exp(pred$fit[, "upr"])
+    } else if (correction == "logit") {
+      dx$mn <- stats::plogis(pred$fit[, "fit"])
+      dx$lo <- stats::plogis(pred$fit[, "lwr"])
+      dx$up <- stats::plogis(pred$fit[, "upr"])
+    } else {
+      dx$mn <- pred$fit[, "fit"]
+      dx$lo <- pred$fit[, "lwr"]
+      dx$up <- pred$fit[, "upr"]
+    }
+  } ### end prediction interval
+  ## initialize plot
+  if (grouped == TRUE) {
     p <- ggplot2::ggplot() +
       ggplot2::geom_point(data = data, ggplot2::aes(x = .data[[d_pvar]],
                                                     y = .data[[d_rvar]],
@@ -654,54 +715,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     p <- p +
       scico::scale_color_scico_d(begin = 0.9, end = 0.1, palette = palette) +
       scico::scale_fill_scico_d(begin = 0.9, end = 0.1, palette = palette)
-  } else { ### non-grouped prediction plot
-    ### deparse variables
-    d_pvar <- deparse(substitute(pvar))
-    d_rvar <- deparse(substitute(rvar))
-    ### get explicit names  of deparsed variables
-    pvar_name <- colnames(data[d_pvar])
-    ## get predictor range
-    dx_pvar <- seq(min(data[[d_pvar]]), max(data[[d_pvar]]),
-                   length.out = length)
-    dx <- data.frame(pvar = dx_pvar)
-    colnames(dx) <- pvar_name
-    ## make prediction
-    if (interval == "confidence") { ### confidence interval
-      pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
-                             type = "response")
-      ### check for correction type
-      if (correction == "exponential") {
-        dx$mn <- exp(stats::qnorm(0.5,   pred$fit, pred$se.fit))
-        dx$lo <- exp(stats::qnorm(0.025, pred$fit, pred$se.fit))
-        dx$up <- exp(stats::qnorm(0.975, pred$fit, pred$se.fit))
-      } else if (correction == "logit") {
-        dx$mn <- stats::plogis(stats::qnorm(0.5,   pred$fit, pred$se.fit))
-        dx$lo <- stats::plogis(stats::qnorm(0.025, pred$fit, pred$se.fit))
-        dx$up <- stats::plogis(stats::qnorm(0.975, pred$fit, pred$se.fit))
-      } else {
-        dx$mn <- stats::qnorm(0.5,   pred$fit, pred$se.fit)
-        dx$lo <- stats::qnorm(0.025, pred$fit, pred$se.fit)
-        dx$up <- stats::qnorm(0.975, pred$fit, pred$se.fit)
-      }
-    } else { ### prediction interval
-      pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
-                             type = "response", interval = "prediction")
-      ### check for correction type
-      if (correction == "exponential") {
-        dx$mn <- exp(pred$fit[, "fit"])
-        dx$lo <- exp(pred$fit[, "lwr"])
-        dx$up <- exp(pred$fit[, "upr"])
-      } else if (correction == "logit") {
-        dx$mn <- stats::plogis(pred$fit[, "fit"])
-        dx$lo <- stats::plogis(pred$fit[, "lwr"])
-        dx$up <- stats::plogis(pred$fit[, "upr"])
-      } else {
-        dx$mn <- pred$fit[, "fit"]
-        dx$lo <- pred$fit[, "lwr"]
-        dx$up <- pred$fit[, "upr"]
-      }
-    } ### end prediction interval
-    ## initialize plot with real data
+
+  } else {
     p <- ggplot2::ggplot() +
       ggplot2::geom_point(data = data, ggplot2::aes(x = .data[[d_pvar]],
                                                     y = .data[[d_rvar]],
@@ -719,13 +734,12 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
                            alpha = 0.5) +
       scico::scale_color_scico(begin = 0.9, end = 0.1, palette = palette) +
       scico::scale_fill_scico(begin = 0.9, end = 0.1, palette = palette)
-  } ### end non-grouped segment
+  }
   ### make the plot look good (group agnostic)
   p <- p +
     ggplot2::labs(
       title = paste("Observed data vs predicted 95%", interval, "interval"),
-      subtitle = paste("Model:", deparse(mod$call))
-    ) +
+      subtitle = paste("Model:", deparse(mod$call))) +
     ggplot2::theme_bw() +
     ggplot2::theme(
       text = ggplot2::element_text(size = 12),

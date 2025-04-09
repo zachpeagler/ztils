@@ -22,6 +22,11 @@ A plot showing PC1 on the x axis, PC2 on the y axis, colored
 by group, with vectors and labels showing the individual pca variables.
 }
 \description{
-This function uses a group, PCA variables, and a "scaled" boolean to generate
-a biplot.using ggplot2
+This function uses a group, PCA variables, and a scaled boolean to
+generate a biplot.using 'ggplot2' and 'scico'.
+}
+\examples{
+pca_plot(iris$Species, iris[,c(1:4)])
+
+pca_plot(iris$Species, iris[,c(1:4)], FALSE, "bilbao")
 }

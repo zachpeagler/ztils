@@ -29,8 +29,21 @@ A plot showing the PDF of the selected variable against the
 selected distributions over the selected sequence length
 }
 \description{
-This function is a version of MultiPDF_plot from my MultiFitR package
-that is customized to use formatting that I like. However, this formatting
-uses several packages that I didn't want to include in the
-base MultiFitR or MultiFitRgg packages.
+This function extends 'multiPDF_cont' and gets the probability density
+functions (PDFs) for selected distributions against continuous variables.
+Possible distributions include any combination of "normal", "lognormal",
+"gamma", "exponential", and "all" (which just uses all of the prior
+distributions). It then plots this using 'ggplot2' and a 'scico' palette,
+using var_name for the plot labeling, if specified. If not specified,
+it will use var instead.
+}
+\examples{
+multipdf_plot(iris$Sepal.Length)
+
+multipdf_plot(iris$Sepal.Length,
+              seq_length = 100,
+              distributions = c("normal", "lognormal", "gamma"),
+              palette = "bilbao",
+              var_name = "Sepal Length (cm)"
+              )
 }

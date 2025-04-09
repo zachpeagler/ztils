@@ -24,3 +24,11 @@ Possible distributions include "normal",
 "lognormal", "gamma", "exponential", "cauchy", "t", "weibull", "logistic",
 and "all".
 }
+\examples{
+multicdf_cont(iris$Petal.Length)
+
+multicdf_cont(iris$Sepal.Length,
+              100,
+              c("normal", "lognormal")
+              )
+}

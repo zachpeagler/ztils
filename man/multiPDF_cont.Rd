@@ -23,3 +23,8 @@ distributions against continuous, non-negative numbers.
 Possible distributions include "normal",
 "lognormal", "gamma", "exponential", and "all".
 }
+\examples{
+multipdf_cont(iris$Petal.Length)
+
+multipdf_cont(iris$Sepal.Length, 100, c("normal", "lognormal"))
+}

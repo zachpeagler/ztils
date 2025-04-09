@@ -18,7 +18,8 @@ the selected variable.
 \description{
 This function returns a dataframe subsetted to not include observations that
 are beyond the outliers of the specified variable.
-}
-\details{
 Outliers are defined by the quantiles +- 1.5 times the interquartile range.
+}
+\examples{
+no_outliers(iris, Sepal.Length)
 }

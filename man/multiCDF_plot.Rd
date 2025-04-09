@@ -28,8 +28,21 @@ A plot showing the CDF of the selected variable against the
 selected distributions over the selected sequence length
 }
 \description{
-This function is a version of multicdf_plot from my MultiFitR package
-that is customized to use formatting that I like. However, this formatting
-uses several packages that I didn't want to include in the
-base MultiFitR or MultiFitRgg packages. (scico)
+This function extends 'multiCDF_cont' and gets the cumulative distribution
+functions (CDFs) for selected distributions against a continuous variable.
+Possible distributions include any combination of "normal", "lognormal",
+"gamma", "exponential", and "all" (which just uses all of the prior
+distributions). It then plots this using 'ggplot2' and a 'scico' palette,
+using var_name for the plot labeling, if specified. If not specified,
+it will use var instead.
+}
+\examples{
+multicdf_plot(iris$Sepal.Length)
+
+multicdf_plot(iris$Sepal.Length,
+              seq_length = 100,
+              distributions = c("normal", "lognormal", "gamma"),
+              palette = "bilbao",
+              var_name = "Sepal Length (cm)"
+              )
 }

@@ -18,7 +18,9 @@ the selected variable.
 \description{
 This function returns a dataframe subsetted to not include observations that
 are beyond the extremes of the specified variable.
-}
-\details{
 Extremes are defined by the quantiles +- 3 times the interquartile range.
+}
+\examples{
+no_extremes(iris, Sepal.Length)
+
 }

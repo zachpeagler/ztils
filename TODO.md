@@ -1,5 +1,6 @@
 - [x] implement proper testing with testthat
+  - [ ] add more tests (get to 100% code coverage)
 - [ ] add vignettes
 - [ ] improve function error codes to be more descriptive
-- [ ] remake 'predict_plot' to lower cyclomatic complexity
+- [x] remake 'predict_plot' to lower cyclomatic complexity
     - this should be relatively easy by changing the group vs non-grouped behavior

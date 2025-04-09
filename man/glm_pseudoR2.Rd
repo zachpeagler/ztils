@@ -13,5 +13,9 @@ glm_pseudor2(mod)
 The pseudo R^2 value of the model
 }
 \description{
-A function for calculating the pseudo R^2 for a glm
+A function for calculating the pseudo R^2 of a glm object
+}
+\examples{
+gmod <- glm(Sepal.Length ~ Petal.Length + Species, data = iris)
+glm_pseudor2(gmod)
 }

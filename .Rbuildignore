@@ -5,3 +5,6 @@
 ^pkgdown$
 ^\.github$
 ^cran-comments\.md$
+^LICENSE\.md$
+^TODO\.md$
+^prototyping$
