@@ -530,20 +530,12 @@ pca_data <- function(data, pcavars, scaled = FALSE) {
 
 #' Prediction Plot
 #'
-#' This function uses a model, dataframe, and supplied predictor,response,
-#' and group variables to make predictions
-#' based off the model over a user-defined length with options to predict
-#' over the confidence or prediction
-#' interval and to apply a mathematical correction.
-#' You can also choose the color palette.
-#'
-#' This function natively uses ggplot2 to graph the plot.
-#' This is because ggplot2 is beautiful and easy,
-#' and I hate making ugly (sorry) base R graphs.
-#'
-#' This function natively uses the scico package color palettes.
-#' I highly recommend scico for easy to use,
-#' colorblind-accessible palettes.
+#' This function uses a model, dataframe, and supplied predictor, response,
+#' and group variables to make predictions based off the model over a
+#' user-defined length with options to predict over the confidence or
+#' prediction interval and to apply a mathematical correction. It then
+#' graphs both the real data and the 95% CI (or PI) using ggplot2.
+#' You can also choose the color palette from 'scico' palettes.
 #'
 #' @param mod the model used for predictions
 #' @param data the data used to render the "real" points on the graph and
@@ -565,6 +557,10 @@ pca_data <- function(data, pcavars, scaled = FALSE) {
 #' with each group corresponding to a color
 #' @returns A plot showing the real data and the model's predicted 95% CI or PI
 #' over a number of groups, with optional corrections.
+#' @examples
+#' ## Example 1
+#' mod1 <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
+#' predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)
 #' @export
 predict_plot <- function(mod, data, rvar, pvar, group = NULL,
                          length = 50, interval = "confidence",
@@ -578,7 +574,6 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     d_rvar <- deparse(substitute(rvar))
     d_group  <- deparse(substitute(group))
     ### get explicit names  of deparsed variables
-    ### weird, but necessary for renaming the newdata (dx) columns \>_>/
     pvar_name <- colnames(data[d_pvar])
     group_name  <- colnames(data[d_group])
     ## get group data ready
@@ -598,8 +593,6 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     colnames(dx) <- c(group_name, pvar_name)
     ## make prediction
     if (interval == "confidence") {
-      ### we don't need to explicitly declare that it's a confidence interval,
-      ### the predict function defaults to it
       pred <- stats::predict(mod, newdata = dx,
                              se.fit = TRUE, type = "response")
       ### check for correction type
@@ -666,7 +659,6 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     d_pvar <- deparse(substitute(pvar))
     d_rvar <- deparse(substitute(rvar))
     ### get explicit names  of deparsed variables
-    ### weird, but necessary for renaming the newdata (dx) columns \>_>/
     pvar_name <- colnames(data[d_pvar])
     ## get predictor range
     dx_pvar <- seq(min(data[[d_pvar]]), max(data[[d_pvar]]),
@@ -675,8 +667,6 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
     colnames(dx) <- pvar_name
     ## make prediction
     if (interval == "confidence") { ### confidence interval
-      ### we don't need to explicitly declare that it's a confidence interval,
-      ### the predict function defaults to it
       pred <- stats::predict(mod, newdata = dx, se.fit = TRUE,
                              type = "response")
       ### check for correction type

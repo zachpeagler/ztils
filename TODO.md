@@ -1,3 +1,5 @@
 - [x] implement proper testing with testthat
 - [ ] add vignettes
 - [ ] improve function error codes to be more descriptive
+- [ ] remake 'predict_plot' to lower cyclomatic complexity
+    - this should be relatively easy by changing the group vs non-grouped behavior
