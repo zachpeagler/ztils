@@ -8,7 +8,7 @@ Description: Utilities for simplifying common statistical operations including
  probability density functions, cumulative distribution functions, 
  Kolmogorov-Smirnov tests, principal component analysis plots, and prediction plots.
 License: MIT + file LICENSE
-URL: https://zachpeagler.github.io/ztils, https://github.com/zachpeagler/ztils
+URL: https://zachpeagler.github.io/ztils/, https://github.com/zachpeagler/ztils
 BugReports: https://github.com/zachpeagler/ztils/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
