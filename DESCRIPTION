@@ -1,15 +1,26 @@
 Package: ztils
-Title: ztils
-Version: 0.0.2.000
+Type: Package
+Title: Common Statistical Utilities
+Version: 0.3.100
 Authors@R: 
     person("Zach", "Peagler", , "zachpeagler00@gmail.com", role = c("aut", "cre"))
-Description: Utilities for easing the headache of common statistical operations including probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests, and predictions.
+Description: Utilities for simplifying common statistical operations including
+ probability density functions, cumulative distribution functions, Kolmogorov-Smirnov tests,
+ principal component plots, and prediction plots.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Imports: ggplot2, MASS, scico, vegan
+Depends:
+    methods,
+    R (>= 3.3.0)
+Imports: 
+    ggplot2,
+    MASS,
+    scico,
+    vegan
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://zachpeagler.github.io/ztils/
+BugReports: https://github.com/zachpeagler/ztils/issues

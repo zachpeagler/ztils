@@ -14,13 +14,16 @@
 
 ## Installation
 
-Not on CRAN yet, working on that.
+To install from CRAN (assuming it's accepted)
+```{r}
+install.packages("ztils")
+```
 
 To install the development version:
 
 
 ```{r}
-remotes::install_github('zachpeagler/ztils')
+remotes::install_github("zachpeagler/ztils")
 ```
 
 <br>
