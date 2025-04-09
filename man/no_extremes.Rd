@@ -12,7 +12,8 @@ no_extremes(data, var)
 \item{var}{The variable to subset by.}
 }
 \value{
-A dataframe without entries containing extremes in the selected variable.
+A dataframe without entries containing extremes in
+the selected variable.
 }
 \description{
 This function returns a dataframe subsetted to not include observations that

@@ -1,7 +1,8 @@
 # ztils
 
-![License: MIT License](https://img.shields.io/badge/License-MIT-lightgrey) 
-![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange)
+![License: MIT License](https://img.shields.io/badge/License-MIT-lightgrey)
+[![R-CMD-check](https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml)
+![lifecycle](https://img.shields.io/badge/lifecycle-maturing-green)
 ![year](https://img.shields.io/badge/year-2024-blue)
 
  Various utilities meant to aid in speeding up common statistical operations, such as:
