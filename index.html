@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ztils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,16 +47,25 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="ztils">ztils<a class="anchor" aria-label="anchor" href="#ztils"></a>
+<div class="page-header"><h1 id="ztils-">ztils <img src="media/ztils_logo.png" align="right" height="120"><a class="anchor" aria-label="anchor" href="#ztils-"></a>
 </h1></div>
-<p><img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="License: MIT License"><a href="https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <img src="https://img.shields.io/badge/lifecycle-maturing-green" alt="lifecycle"><img src="https://img.shields.io/badge/year-2024-blue" alt="year"></p>
-<p>Various utilities meant to aid in speeding up common statistical operations, such as: - removing outliers and extremes - generating probability density and cumulative distribution graphs with ggplot2 - running one-sample Kolmogorov-Smirnov tests against multiple distributions at once - generating prediction plots with ggplot2 - scaling data and performing principal component analysis (PCA) - plotting PCA with ggplot2</p>
+<p><img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="License: MIT License"><a href="https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <img src="https://img.shields.io/badge/lifecycle-maturing-green" alt="lifecycle"><img src="https://img.shields.io/badge/year-2025-blue" alt="year"></p>
+<p>Built on MASS, vegan, ggplot2, and scico, this package is meant to provide user friendly functions to quickly and efficiently perform various common statistical operations and generate beautiful, colorblind-accessible plots. Examples of some such operations include: - removing outliers and extremes - generating probability density and cumulative distribution function graphs - running one-sample Kolmogorov-Smirnov tests against multiple distributions at once - generating prediction plots for linear and generalized linear models - scaling data then performing and plotting principal component analyses</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>To install from CRAN <code>{r} install.packages("ztils")</code> To install the development version: <code>{r} remotes::install_github("zachpeagler/ztils")</code></p>
+</div>
+<div class="section level2">
+<h2 id="bug-reporting">Bug reporting<a class="anchor" aria-label="anchor" href="#bug-reporting"></a>
+</h2>
+<p>If you find any bugs, please report them at <a href="https://github.com/zachpeagler/ztils/issues" class="external-link uri">https://github.com/zachpeagler/ztils/issues</a>.</p>
 <p><br></p>
 </div>
+</div>
+<div class="section level1">
+<h1 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a>
+</h1>
 <div class="section level2">
 <h2 id="no_outliers">no_outliers()<a class="anchor" aria-label="anchor" href="#no_outliers"></a>
 </h2>
@@ -486,14 +495,8 @@ Returns a plot with the observed (real) data plotted as points and the predictio
 ```{r}
 mod1 &lt;- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
 predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)</code></pre>
-<p><br></p>
 </div>
 </div>
-</div>
-<div class="section level1">
-<h1 id="bug-reporting">Bug reporting<a class="anchor" aria-label="anchor" href="#bug-reporting"></a>
-</h1>
-<p>If you find any bugs, please report them at <a href="https://github.com/zachpeagler/ztils/issues" class="external-link uri">https://github.com/zachpeagler/ztils/issues</a>.</p>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
