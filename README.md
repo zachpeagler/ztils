@@ -1,17 +1,17 @@
-# ztils
+# ztils <img src="media/ztils_logo.png" align="right" height="120"/>
 
 ![License: MIT License](https://img.shields.io/badge/License-MIT-lightgrey)
 [![R-CMD-check](https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml)
 ![lifecycle](https://img.shields.io/badge/lifecycle-maturing-green)
-![year](https://img.shields.io/badge/year-2024-blue)
+![year](https://img.shields.io/badge/year-2025-blue)
 
- Various utilities meant to aid in speeding up common statistical operations, such as:
+Built on MASS, vegan, ggplot2, and scico, this package is meant to provide user friendly functions to quickly and efficiently perform various common statistical operations and generate beautiful, colorblind-accessible plots. Examples of some such operations include:
  - removing outliers and extremes
- - generating probability density and cumulative distribution graphs with ggplot2
+ - generating probability density and cumulative distribution function graphs
  - running one-sample Kolmogorov-Smirnov tests against multiple distributions at once
- - generating prediction plots with ggplot2
- - scaling data and performing principal component analysis (PCA)
- - plotting PCA with ggplot2
+ - generating prediction plots for linear and generalized linear models
+ - scaling data then performing and plotting principal component analyses
+
 
 ## Installation
 
@@ -24,8 +24,13 @@ To install the development version:
 remotes::install_github("zachpeagler/ztils")
 ```
 
+
+## Bug reporting
+If you find any bugs, please report them at https://github.com/zachpeagler/ztils/issues.
+
 <br>
 
+# Functions
 
 ## no_outliers()
 
@@ -399,9 +404,3 @@ Returns a plot with the observed (real) data plotted as points and the predictio
 mod1 <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
 predict_plot(mod1, iris, Sepal.Length, Petal.Length, Species)
 ```
-
-<br>
-
-
-# Bug reporting
-If you find any bugs, please report them at https://github.com/zachpeagler/ztils/issues.

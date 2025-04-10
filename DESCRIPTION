@@ -1,7 +1,7 @@
 Package: ztils
 Type: Package
 Title: Various Common Statistical Utilities
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person("Zach", "Peagler", , "zachpeagler00@gmail.com", role = c("aut", "cre", "cph"))
 Description: Utilities for simplifying common statistical operations including
