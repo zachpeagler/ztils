@@ -387,7 +387,7 @@ multipdf_plot <- function(var, seq_length = 50, distributions = "all",
                                 linewidth = 2)
   }
   p <- p +
-    scico::scale_color_scico_d(begin = 0.9, end = 0.1, palette = palette) +
+    scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
     ggplot2::theme(
       text = ggplot2::element_text(size = 10),
       title = ggplot2::element_text(size = 14, face = "bold"),
@@ -479,7 +479,7 @@ multicdf_plot <- function(var, seq_length = 50, distributions = "all",
                                 linewidth = 2)
   }
   p <- p +
-    scico::scale_color_scico_d(begin = 0.9, end = 0.1, palette = palette) +
+    scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
     ggplot2::theme(
       text = ggplot2::element_text(size = 10),
       title = ggplot2::element_text(size = 14, face = "bold"),
@@ -543,7 +543,7 @@ pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
                       label = rownames(vx)) +
     ggplot2::xlab(paste0("PC1 (", pc1val, "%)")) +
     ggplot2::ylab(paste0("PC2 (", pc2val, "%)")) +
-    scico::scale_color_scico_d(begin = 0.9, end = 0.1, palette = palette) +
+    scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "Groups")) +
     ggplot2::theme_bw() +
     ggplot2::theme(
@@ -713,8 +713,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
                              alpha = 0.5)
     }
     p <- p +
-      scico::scale_color_scico_d(begin = 0.9, end = 0.1, palette = palette) +
-      scico::scale_fill_scico_d(begin = 0.9, end = 0.1, palette = palette)
+      scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
+      scico::scale_fill_scico_d(begin = 0.8, end = 0.3, palette = palette)
 
   } else {
     p <- ggplot2::ggplot() +
@@ -732,8 +732,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
       ggplot2::geom_ribbon(data = dx, ggplot2::aes(x = .data[[d_pvar]],
                                                    ymin = lo, ymax = up),
                            alpha = 0.5) +
-      scico::scale_color_scico(begin = 0.9, end = 0.1, palette = palette) +
-      scico::scale_fill_scico(begin = 0.9, end = 0.1, palette = palette)
+      scico::scale_color_scico(begin = 0.8, end = 0.3, palette = palette) +
+      scico::scale_fill_scico(begin = 0.8, end = 0.3, palette = palette)
   }
   ### make the plot look good (group agnostic)
   p <- p +
