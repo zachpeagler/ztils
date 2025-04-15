@@ -362,7 +362,7 @@ multipdf_plot <- function(var, seq_length = 50, distributions = "all",
                        linetype = 2, linewidth = 3) +
     ggplot2::xlab(var_name) +
     ggplot2::ylab("PDF") +
-    ggplot2::labs(title = paste("PDF plot for", var_name,
+    ggplot2::labs(title = paste("PDF for", var_name,
                                 "over selected distributions")) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "Distribution")) +
     ggplot2::theme_bw()
@@ -455,7 +455,7 @@ multicdf_plot <- function(var, seq_length = 50, distributions = "all",
                        linetype = 2, linewidth = 3) +
     ggplot2::xlab(var_name) +
     ggplot2::ylab("CDF") +
-    ggplot2::labs(title = paste("CDF plot for", var_name,
+    ggplot2::labs(title = paste("CDF for", var_name,
                                 "over selected distributions")) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "Distribution")) +
     ggplot2::theme_bw()
