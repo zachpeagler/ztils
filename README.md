@@ -12,6 +12,7 @@ Built on MASS, vegan, ggplot2, and scico, this package is meant to provide user 
  - generating prediction plots for linear and generalized linear models
  - scaling data then performing and plotting principal component analyses
 
+> Many of the functions herein are inspired by the fantastic Dr. Nick Green's book [Applied Biological Data Analysis](https://greenquanteco.github.io/book/). To be clear, this work *is in no way* affiliated with or endorsed by him.
 
 ## Installation
 
