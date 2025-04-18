@@ -79,7 +79,7 @@ multipdf_plot <- function(var, seq_length = 50, distributions = "all",
                                 linewidth = 2)
   }
   p <- p +
-    scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
+    scico::scale_color_scico_d(begin = 0.9, end = 0.2, palette = palette) +
     ggplot2::theme(
       text = ggplot2::element_text(size = 10),
       title = ggplot2::element_text(size = 14, face = "bold"),

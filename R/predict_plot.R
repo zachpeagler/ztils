@@ -130,8 +130,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
                              alpha = 0.5)
     }
     p <- p +
-      scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
-      scico::scale_fill_scico_d(begin = 0.8, end = 0.3, palette = palette)
+      scico::scale_color_scico_d(begin = 0.9, end = 0.2, palette = palette) +
+      scico::scale_fill_scico_d(begin = 0.9, end = 0.2, palette = palette)
   } else {
     p <- ggplot2::ggplot() +
       ggplot2::geom_point(data = data, ggplot2::aes(x = .data[[d_pvar]],
@@ -148,8 +148,8 @@ predict_plot <- function(mod, data, rvar, pvar, group = NULL,
       ggplot2::geom_ribbon(data = dx, ggplot2::aes(x = .data[[d_pvar]],
                                                    ymin = lo, ymax = up),
                            alpha = 0.5) +
-      scico::scale_color_scico(begin = 0.8, end = 0.3, palette = palette) +
-      scico::scale_fill_scico(begin = 0.8, end = 0.3, palette = palette)
+      scico::scale_color_scico(begin = 0.9, end = 0.2, palette = palette) +
+      scico::scale_fill_scico(begin = 0.9, end = 0.2, palette = palette)
   }
   ### make the plot look good (group agnostic)
   p <- p +

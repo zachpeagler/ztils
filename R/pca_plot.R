@@ -50,7 +50,7 @@ pca_plot <- function(group, pcavars, scaled = FALSE, palette = "oslo") {
                       label = rownames(vx)) +
     ggplot2::xlab(paste0("PC1 (", pc1val, "%)")) +
     ggplot2::ylab(paste0("PC2 (", pc2val, "%)")) +
-    scico::scale_color_scico_d(begin = 0.8, end = 0.3, palette = palette) +
+    scico::scale_color_scico_d(begin = 0.9, end = 0.2, palette = palette) +
     ggplot2::guides(color = ggplot2::guide_legend(title = "Groups")) +
     ggplot2::theme_bw() +
     ggplot2::theme(
