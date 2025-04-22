@@ -1,7 +1,10 @@
 #' Principal Component Analysis Plot
 #' @description
-#' This function uses a group, PCA variables, and a scaled boolean to
-#' generate a biplot.using 'ggplot2' and 'scico'.
+#' This function uses a group, PCA variables, and a 'scaled' boolean to
+#' generate a biplot using 'ggplot2' and 'scico'.
+#'
+#' If scaled is set to TRUE, variables will not be scaled. If scaled is set to
+#' FALSE, variables will be scaled.
 #'
 #' @param group The group variable (column)
 #' @param pcavars The variables to include in the principle component analysis
