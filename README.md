@@ -1,5 +1,6 @@
 # ztils <img src="media/ztils_logo.png" align="right" height="120"/>
 [![CRAN](https://img.shields.io/badge/CRAN-1.0.0-neon)](https://cran.r-project.org/web/packages/ztils/index.html)
+![dev-version](https://img.shields.io/badge/GitHub-1.1.2-lightblue)
 ![License: MIT License](https://img.shields.io/badge/License-MIT-lightgrey)
 [![R-CMD-check](https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/zachpeagler/ztils/actions/workflows/R-CMD-check.yaml)
 ![lifecycle](https://img.shields.io/badge/lifecycle-maturing-green)
